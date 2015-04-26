@@ -9,6 +9,9 @@ class ProgramParametersManager:
         self.machinesNum = mach
         self.jobs = jobsTab
 
+    def printParameters(self):
+        print(self.iterations, self.stepLen, self.cockroachesNum, self.jobsNum, self.machinesNum, self.jobsNum)
+
 
 
 

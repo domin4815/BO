@@ -21,11 +21,15 @@ for c in strings:
     r = r + 1
 
 def nextButton():
-    controler.iterations = inputs[0]
-    controler.stepLen = inputs[1]
-    controler.cockroachesNum = inputs[2]
-    controler.jobsNum = inputs[3]
-    controler.machinesNum = inputs[4]
+    try:
+        controler.iterations = int(inputs[0].get("1.0",'end-1c'))
+        controler.stepLen = int(inputs[1].get("1.0",'end-1c'))
+        controler.cockroachesNum = int(inputs[2].get("1.0",'end-1c'))
+        controler.jobsNum = int(inputs[3].get("1.0",'end-1c'))
+        controler.machinesNum = int(inputs[4].get("1.0",'end-1c'))
+    except ValueError:
+        print("Value error")
+    controler.printParameters()
 
 
 
