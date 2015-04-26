@@ -2,7 +2,7 @@ __author__ = 'domin4815'
 from Tkinter import *
 import Controller
 
-#CONFIG
+#CONFIGe
 inputWidth = 30
 inputHeight = 2
 controler = Controller.ProgramParametersManager(0,0,0,0,0,0)
