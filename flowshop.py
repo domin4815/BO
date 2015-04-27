@@ -33,6 +33,7 @@ def swarm(jobs, states, steps, optimal_cost, optimal_state):
                     cost = calculate_cost(jobs, state_i)
                     if cost < optimal_cost:
                         optimal_cost, optimal_state = cost, state_i[:]
+    return optimal_cost
 
 
 def disperse(states, jobs, optimal_cost, optimal_state):
@@ -44,6 +45,7 @@ def disperse(states, jobs, optimal_cost, optimal_state):
             cost = calculate_cost(jobs, state)
             if cost < optimal_cost:
                 optimal_cost, optimal_state = cost, state[:]
+    return optimal_cost
 
 
 def ruthless(states, optimal_state):
@@ -51,7 +53,7 @@ def ruthless(states, optimal_state):
     states[index] = optimal_state[:]
 
 
-def cockroach(iterations, steps, cockroach_count, job_count, machine_count):
+def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobTimes):
     jobs = {}
     states = []
     optimal_state = []
@@ -61,6 +63,7 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count):
     for i in xrange(job_count):
         times = map(lambda x: int(x), raw_input().split(' ')[:machine_count])
         jobs[i] = times
+        # jobs[i] = [jobTimes[i]]
 
     for i in xrange(cockroach_count):
         state = range(job_count)
@@ -74,9 +77,9 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count):
     print(optimal_cost, optimal_state)
 
     for i in xrange(iterations):
-        print i
-        swarm(jobs, states, steps, optimal_cost, optimal_state)
-        disperse(states, jobs, optimal_cost, optimal_state)
+        print optimal_cost
+        optimal_cost = swarm(jobs, states, steps, optimal_cost, optimal_state)
+        optimal_cost = disperse(states, jobs, optimal_cost, optimal_state)
         ruthless(states, optimal_state)
 
     return (optimal_cost, optimal_state)
@@ -87,4 +90,18 @@ def run_cockroaches(iterations, steps, cockroach_count, job_count,
     job_times = neh.neh(job_times)
     r = cockroach(iterations, steps, cockroach_count, job_count, machine_count,
         job_times)
+    print(r[0], r[1])
+
+
+if __name__ == '__main__':
+    iterations = input()#'Iterations: ')
+    steps = input()#'Step length: ')
+    cockroach_count = input()#'Number of cockroaches: ')
+    job_count = input()#'Number of jobs: ')
+    machine_count = input()#'Number of machines: ')
+
+    r = cockroach(
+        iterations, steps, cockroach_count, job_count, machine_count, []
+    )
+
     print(r[0], r[1])
