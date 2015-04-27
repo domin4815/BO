@@ -1,5 +1,7 @@
 from random import shuffle, randint
 import pprint
+import neh
+
 def calculate_cost(jobs, state):
     cost = [[] for i in xrange(len(jobs))]
 
@@ -30,7 +32,7 @@ def swarm(jobs, states, steps, optimal_cost, optimal_state):
                     step(state_i, state_j)
                     cost = calculate_cost(jobs, state_i)
                     if cost < optimal_cost:
-                        optimal_cost, optimal_state = cost, state_i
+                        optimal_cost, optimal_state = cost, state_i[:]
 
 
 def disperse(states, jobs, optimal_cost, optimal_state):
@@ -41,15 +43,15 @@ def disperse(states, jobs, optimal_cost, optimal_state):
             step(state, rand)
             cost = calculate_cost(jobs, state)
             if cost < optimal_cost:
-                optimal_cost, optimal_state = cost, state
+                optimal_cost, optimal_state = cost, state[:]
 
 
 def ruthless(states, optimal_state):
     index = randint(0, len(states) - 1)
-    states[index] = optimal_state
+    states[index] = optimal_state[:]
 
 
-def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobTimes):
+def cockroach(iterations, steps, cockroach_count, job_count, machine_count):
     jobs = {}
     states = []
     optimal_state = []
@@ -57,9 +59,8 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
 
     # print('Times:')
     for i in xrange(job_count):
-        #times = map(lambda x: int(x), raw_input().split(' ')[:machine_count])
-        #jobs[i] = times
-        jobs[i] = [jobTimes[i]]
+        times = map(lambda x: int(x), raw_input().split(' ')[:machine_count])
+        jobs[i] = times
 
     for i in xrange(cockroach_count):
         state = range(job_count)
@@ -68,7 +69,7 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
         cost = calculate_cost(jobs, state)
         # print(cost, state)
         if cost < optimal_cost:
-            optimal_cost, optimal_state = cost, state
+            optimal_cost, optimal_state = cost, state[:]
 
     print(optimal_cost, optimal_state)
 
@@ -80,6 +81,10 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
 
     return (optimal_cost, optimal_state)
 
-def runCockroaches(iterations, steps, cockroach_count, job_count, machine_count, jobTimes):
-    r = cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobTimes)
+
+def run_cockroaches(iterations, steps, cockroach_count, job_count,
+    machine_count, job_times):
+    job_times = neh.neh(job_times)
+    r = cockroach(iterations, steps, cockroach_count, job_count, machine_count,
+        job_times)
     print(r[0], r[1])

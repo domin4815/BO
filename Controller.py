@@ -3,18 +3,19 @@ import View
 __author__ = 'domin4815'
 
 
-class ProgramController:
+class ProgramController(object):
 
     def __init__(self, iterations, step, cs, jobs, mach, jobsTab):
         self.iterations = iterations
-        self.stepLen = step
-        self.cockroachesNum = cs
-        self.jobsNum = jobs
-        self.machinesNum = mach
+        self.step_len = step
+        self.cockroaches_num = cs
+        self.jobs_num = jobs
+        self.machines_num = mach
         self.jobs = jobsTab
 
-    def printParameters(self):
-        print(self.iterations, self.stepLen, self.cockroachesNum, self.jobsNum, self.machinesNum, self.jobsNum)
+    def print_parameters(self):
+        print(self.iterations, self.step_len, self.cockroaches_num,
+            self.jobs_num, self.machines_num, self.jobs_num)
 
 if __name__ == '__main__':
     View.frame1(ProgramController(10,10,10,10,10,[]))
