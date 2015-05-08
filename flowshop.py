@@ -1,5 +1,6 @@
 from random import shuffle, randint
 import pprint
+import datetime
 import neh
 
 def calculate_cost(jobs, state):
@@ -99,9 +100,11 @@ if __name__ == '__main__':
     cockroach_count = input()#'Number of cockroaches: ')
     job_count = input()#'Number of jobs: ')
     machine_count = input()#'Number of machines: ')
-
+    dat1 = datetime.datetime.now()
     r = cockroach(
         iterations, steps, cockroach_count, job_count, machine_count, []
     )
+    dat2 = datetime.datetime.now()
+    print(dat2-dat1)
 
     print(r[0], r[1])

@@ -1,7 +1,10 @@
+#!/usr/bin/python
+#  -*- coding: latin-1 -*-
 __author__ = 'domin4815'
 from Tkinter import *
 import flowshop
-#CONFIG
+from tkFileDialog import askopenfilename
+# CONFIG
 input_width = 26
 input_height = 2
 
@@ -11,8 +14,49 @@ button_height = 2
 label_height = 2
 label_width = 23
 
+title = "BO"
 
-def frame1(controler):
+
+def inputChooserFrame(controller):
+    root = Tk()
+    root.title(title)
+    # width x height + x_offset + y_offset:
+
+    def readFromFileButton():
+        root.destroy()
+
+        readFromFileFrame(controller)
+        pass
+
+    def nahButton():
+        pass
+
+    def insertDataMAnuallyButton():
+        root.destroy()
+        insertDataManuallyFrame1(controller)
+        pass
+
+    def readTest():
+        root.destroy()
+        readFromFileFrame(controller, filename="tai20_5.txt")
+
+
+
+    logo = PhotoImage(file="images/agh.png")
+    w1 = Label(root, image=logo).pack()
+
+    nahButton = Button(root, text='NAH', width=button_width, command=nahButton, bg='green',
+                    height=button_height).pack()
+    readFileButton = Button(root, text='Read from file', width=button_width, command=readFromFileButton, bg='sea green',
+                    height=button_height).pack()
+    readFileButton = Button(root, text='Insert data manually', width=button_width, command=insertDataMAnuallyButton, bg='dark olive green',
+                height=button_height).pack()
+    readFileTestButton = Button(root, text='Read from tai20_5.txt', width=button_width, command=readTest, bg='dark olive green',
+                height=button_height).pack()
+    mainloop()
+
+
+def insertDataManuallyFrame1(controller):
     strings = [
         'Iterations', 'Step len', 'Number of cockroaches',
         'Number of jobs', 'Number of machines'
@@ -23,8 +67,7 @@ def frame1(controler):
 
     r = 0
     for c in strings:
-        Label(root, text=c, width=label_width, height=label_height)
-            .grid(row=r, column=0)
+        Label(root, text=c, width=label_width, height=label_height).grid(row=r, column=0)
         T = Entry(root)
         inputs.append(T)
         T.grid(row=r, column=1)
@@ -32,19 +75,19 @@ def frame1(controler):
 
     def next_button():
         try:
-            controler.iterations = int(inputs[0].get())
-            controler.step_len = int(inputs[1].get())
-            controler.cockroaches_num = int(inputs[2].get())
-            controler.jobs_num = int(inputs[3].get())
-            controler.machines_num = int(inputs[4].get())
+            controller.iterations = int(inputs[0].get())
+            controller.step_len = int(inputs[1].get())
+            controller.cockroaches_num = int(inputs[2].get())
+            controller.jobs_num = int(inputs[3].get())
+            controller.machines_num = int(inputs[4].get())
         except ValueError:
             print("Value error")
         #controler.print_parameters()
         root.destroy()
-        frame2(controler)
+        insertDataManuallyFrame2(controller)
 
     button = Button(root, text='Next', width=button_width, command=next_button,
-        height=button_height).grid(row=r, column=0)
+                    height=button_height).grid(row=r, column=0)
     button2 = Button(
         root, text='Next with \ndefault values',
         width=button_width, command=next_button, height=button_height
@@ -52,42 +95,50 @@ def frame1(controler):
 
     mainloop()
 
-
-def frame2(controler):
+def insertDataManuallyFrame2(controller):
     root = Tk()
     root.title("BO")
     inputs = []
     r = 0
-    for i in xrange(0, controler.jobs_num):
-        Label(root, text='Job #{0} time'.format(str(i+1)), width=label_width,
-            height=label_height).grid(row=r,column=0)
+    for i in xrange(0, controller.jobs_num):
+        Label(root, text='Job #{0} time'.format(str(i + 1)), width=label_width,
+              height=label_height).grid(row=r, column=0)
         T = Entry(root)
-        T.insert(0, str(i+7))
+        T.insert(0, str(i + 7))
         inputs.append(T)
         T.grid(row=r, column=1)
         r = r + 1
 
     def go_button():
         try:
-            for i in range(0, controler.jobs_num):
-                controler.jobs += [int(inputs[i].get())]
+            for i in range(0, controller.jobs_num):
+                controller.jobs += [int(inputs[i].get())]
         except ValueError:
             print("Value error")
         root.destroy()
         flowshop.run_cockroaches(
-            controler.iterations, controler.step_len,
-            controler.cockroaches_num, controler.jobs_num,
-            controler.machines_num,
-            controler.jobs
+            controller.iterations, controller.step_len,
+            controller.cockroaches_num, controller.jobs_num,
+            controller.machines_num,
+            controller.jobs
         )
 
     def back_button():
         root.destroy()
-        frame1(controler)
+        insertDataManuallyFrame1(controller)
 
     button = Button(root, text='Go', width=button_width, command=go_button,
-        height=button_height).grid(row=r, column=1)
+                    height=button_height).grid(row=r, column=1)
     button2 = Button(root, text='Back', width=button_width, command=back_button,
-        height=button_height).grid(row=r, column=0)
+                     height=button_height).grid(row=r, column=0)
 
     mainloop()
+
+def readFromFileFrame(controller, filename="none" ):
+    root = Tk()
+    root.title(title)
+    if (filename == "none"):
+        filename = askopenfilename()
+    file = open(filename, 'r')
+    print(file.readline())
+    print(file.read(30))

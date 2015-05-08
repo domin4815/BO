@@ -18,4 +18,4 @@ class ProgramController(object):
             self.jobs_num, self.machines_num, self.jobs_num)
 
 if __name__ == '__main__':
-    View.frame1(ProgramController(10,10,10,10,10,[]))
+    View.inputChooserFrame(ProgramController(100,2,2,10,10,[]))
