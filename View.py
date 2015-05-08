@@ -3,6 +3,7 @@
 __author__ = 'domin4815'
 from Tkinter import *
 import flowshop
+import re
 from tkFileDialog import askopenfilename
 # CONFIG
 input_width = 26
@@ -51,7 +52,7 @@ def inputChooserFrame(controller):
                     height=button_height).pack()
     readFileButton = Button(root, text='Insert data manually', width=button_width, command=insertDataMAnuallyButton, bg='dark olive green',
                 height=button_height).pack()
-    readFileTestButton = Button(root, text='Read from tai20_5.txt', width=button_width, command=readTest, bg='dark olive green',
+    readFileTestButton = Button(root, text='Read from tai20_5.txt', width=button_width, command=readTest, bg='red',
                 height=button_height).pack()
     mainloop()
 
@@ -134,11 +135,38 @@ def insertDataManuallyFrame2(controller):
 
     mainloop()
 
-def readFromFileFrame(controller, filename="none" ):
+def readFromFileFrame(controller, filename="none"):
     root = Tk()
     root.title(title)
     if (filename == "none"):
         filename = askopenfilename()
     file = open(filename, 'r')
-    print(file.readline())
-    print(file.read(30))
+    pattern = re.compile(r'([0-9]+)')
+
+    try: # nie umiem pythona
+        while(file.readline()[0]=='n'): #number of jobs, number of machines, initial seed, upper bound and lower bound :
+            str = file.readline()
+            out2 = pattern.findall(str)
+
+            jobsNum = int(out2[0])
+            machinesNum = int(out2[1])
+            initialSpeed = int(out2[2])
+            upperBound = int(out2[3])
+            liwerBound = int(out2[4])
+
+            jobsTab = []
+
+            for i in range(jobsNum):
+                jobsTab.append([])
+
+            file.readline() #processing times :
+            for machineN in range(machinesNum):
+                str = file.readline()
+                jobsTimesOnMachine = pattern.findall(str)
+                for jobN in range(jobsNum):
+                    jobsTab[jobN].append(jobsTimesOnMachine[jobN])
+            print(jobsTab[0])
+
+    except IndexError:
+        pass
+
