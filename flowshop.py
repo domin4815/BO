@@ -2,6 +2,8 @@ from random import shuffle, randint
 import pprint
 import datetime
 import neh
+import Controller
+
 
 def calculate_cost(jobs, state):
     cost = [[] for i in xrange(len(jobs))]
@@ -61,10 +63,11 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
     optimal_cost = 999999999999999999
 
     # print('Times:')
-    for i in xrange(job_count):
-        times = map(lambda x: int(x), raw_input().split(' ')[:machine_count])
-        jobs[i] = times
-        # jobs[i] = [jobTimes[i]]
+    if jobTimes is None:
+        for i in xrange(job_count):
+            times = map(lambda x: int(x), raw_input().split(' ')[:machine_count])
+            jobs[i] = times
+            # jobs[i] = [jobTimes[i]]
 
     for i in xrange(cockroach_count):
         state = range(job_count)
@@ -103,6 +106,19 @@ if __name__ == '__main__':
     dat1 = datetime.datetime.now()
     r = cockroach(
         iterations, steps, cockroach_count, job_count, machine_count, []
+    )
+    dat2 = datetime.datetime.now()
+    print(dat2-dat1)
+
+    print(r[0], r[1])
+
+def startFromGUI(controller):
+    dat1 = datetime.datetime.now()
+    print("JobTimes: ")
+    print(controller.jobs)
+    r = cockroach(
+        controller.iterations, controller.step_len,controller.cockroaches_num, controller.jobs_num,
+        controller.machines_num, jobTimes=controller.jobs
     )
     dat2 = datetime.datetime.now()
     print(dat2-dat1)

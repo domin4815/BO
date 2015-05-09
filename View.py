@@ -39,7 +39,7 @@ def inputChooserFrame(controller):
 
     def readTest():
         root.destroy()
-        readFromFileFrame(controller, filename="tai20_5.txt")
+        readFromFileFrame(controller, filename="tai20_5short.txt")
 
 
 
@@ -52,8 +52,11 @@ def inputChooserFrame(controller):
                     height=button_height).pack()
     readFileButton = Button(root, text='Insert data manually', width=button_width, command=insertDataMAnuallyButton, bg='dark olive green',
                 height=button_height).pack()
-    readFileTestButton = Button(root, text='Read from tai20_5.txt', width=button_width, command=readTest, bg='red',
-                height=button_height).pack()
+    readFileTestButton = Button(root, text='Read from tai20_5short.txt \n'
+                                           'iterations = 400\n'
+                                           'step len = 3\n'
+                                           'cockroaches = 30', width=button_width, command=readTest, bg='red',
+                height=button_height+3).pack()
     mainloop()
 
 
@@ -141,32 +144,92 @@ def readFromFileFrame(controller, filename="none"):
     if (filename == "none"):
         filename = askopenfilename()
     file = open(filename, 'r')
-    pattern = re.compile(r'([0-9]+)')
 
+    strings = [
+        'Iterations', 'Step len', 'Number of cockroaches'
+    ]
+    inputs = []
+    r = 0
+    for c in strings:
+        Label(root, text=c, width=label_width, height=label_height).grid(row=r, column=0)
+        T = Entry(root)
+        inputs.append(T)
+        T.grid(row=r, column=1)
+        r += 1
+
+    def next_button():
+        #nie umiem pythona2
+        try:
+            controller.iterations = int(inputs[0].get())
+        except ValueError:
+            pass
+
+        try:
+            controller.step_len = int(inputs[1].get())
+        except ValueError:
+            pass
+        try:
+            controller.cockroaches_num = int(inputs[2].get())
+        except ValueError:
+            pass
+        root.destroy()
+        parseFile(controller, file)
+
+    def back_button():
+        print("Not implemented...")
+        pass
+
+    buttonBack = Button(root, text='Back', width=button_width, command=back_button,
+                    height=button_height).grid(row=r, column=0)
+    button = Button(root, text='Start', width=button_width, command=next_button, bg='green',
+                    height=button_height).grid(row=r, column=1)
+
+    mainloop()
+
+
+def parseFile(controller, file):
+    print("Parsing input data...")
+    pattern = re.compile(r'([0-9]+)')
     try: # nie umiem pythona
+        #plik z instancjami zawiera 10 roznych zestawow danych wejsciowych
         while(file.readline()[0]=='n'): #number of jobs, number of machines, initial seed, upper bound and lower bound :
             str = file.readline()
             out2 = pattern.findall(str)
 
-            jobsNum = int(out2[0])
-            machinesNum = int(out2[1])
+            controller.jobs_num = int(out2[0])
+            controller.machines_num = int(out2[1])
+            if controller.iterations == 0:
+                controller.iterations = 400
+            if controller.step_len == 0:
+                controller.step_len = 3
+            if controller.cockroaches_num == 0:
+                controller.cockroaches_num = 30
             initialSpeed = int(out2[2])
             upperBound = int(out2[3])
             liwerBound = int(out2[4])
 
             jobsTab = []
 
-            for i in range(jobsNum):
+            for i in range(controller.jobs_num):
                 jobsTab.append([])
 
             file.readline() #processing times :
-            for machineN in range(machinesNum):
+            for machineN in range(controller.machines_num):
                 str = file.readline()
                 jobsTimesOnMachine = pattern.findall(str)
-                for jobN in range(jobsNum):
-                    jobsTab[jobN].append(jobsTimesOnMachine[jobN])
-            print(jobsTab[0])
+                for jobN in range(controller.jobs_num):
+                    jobsTab[jobN].append(int(jobsTimesOnMachine[jobN]))
+            controller.jobs = jobsTab
+            print("flowshop wystartowany z parametrami:")
+            print("iteracje: ", controller.iterations)
+            print("step: ", controller.step_len)
+            print("karaluchy: ", controller.cockroaches_num)
+            startFlowshop(controller)
+
 
     except IndexError:
         pass
 
+
+def startFlowshop(controller):
+    flowshop.startFromGUI(controller)
