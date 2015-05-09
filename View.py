@@ -150,6 +150,9 @@ def readFromFileFrame(controller, filename="none"):
     ]
     inputs = []
     r = 0
+    Label(root, text="Insert data or click start", width=label_width, height=label_height, bg="green").grid(row=r, column=0)
+    Label(root, text="to run with default values", width=label_width, height=label_height, bg="green").grid(row=r, column=1)
+    r+=1
     for c in strings:
         Label(root, text=c, width=label_width, height=label_height).grid(row=r, column=0)
         T = Entry(root)
@@ -178,6 +181,7 @@ def readFromFileFrame(controller, filename="none"):
     def back_button():
         print("Not implemented...")
         pass
+
 
     buttonBack = Button(root, text='Back', width=button_width, command=back_button,
                     height=button_height).grid(row=r, column=0)

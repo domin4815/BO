@@ -67,7 +67,13 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
         for i in xrange(job_count):
             times = map(lambda x: int(x), raw_input().split(' ')[:machine_count])
             jobs[i] = times
-            # jobs[i] = [jobTimes[i]]
+            #jobs[i] = [jobTimes[i]]
+    else:
+        for i in xrange(job_count):
+            #jobs[i] = times
+            jobs[i] = jobTimes[i]
+
+    print(jobs)
 
     for i in xrange(cockroach_count):
         state = range(job_count)
@@ -98,6 +104,7 @@ def run_cockroaches(iterations, steps, cockroach_count, job_count,
 
 
 if __name__ == '__main__':
+    print("Insert data")
     iterations = input()#'Iterations: ')
     steps = input()#'Step length: ')
     cockroach_count = input()#'Number of cockroaches: ')
@@ -105,7 +112,7 @@ if __name__ == '__main__':
     machine_count = input()#'Number of machines: ')
     dat1 = datetime.datetime.now()
     r = cockroach(
-        iterations, steps, cockroach_count, job_count, machine_count, []
+        iterations, steps, cockroach_count, job_count, machine_count, jobTimes=None
     )
     dat2 = datetime.datetime.now()
     print(dat2-dat1)
