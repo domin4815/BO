@@ -26,7 +26,7 @@ def inputChooserFrame(controller):
     def readFromFileButton():
         root.destroy()
 
-        readFromFileFrame(controller)
+        readFromFileFrame(controller, isNehEnabled=False)
         pass
 
     def nahButton():
@@ -39,12 +39,15 @@ def inputChooserFrame(controller):
 
     def readTest():
         root.destroy()
-        readFromFileFrame(controller, filename="tai20_5short.txt")
+        readFromFileFrame(controller, isNehEnabled=False, filename="tai20_5short.txt")
+
+    def readTestWithNeh():
+        root.destroy()
+        readFromFileFrame(controller, isNehEnabled=True, filename="tai20_5short.txt")
 
 
-
-    logo = PhotoImage(file="images/agh.png")
-    w1 = Label(root, image=logo).pack()
+    #logo = PhotoImage(file="images/agh.png")
+    #w1 = Label(root, image=logo).pack()
 
     nahButton = Button(root, text='NAH', width=button_width, command=nahButton, bg='green',
                     height=button_height).pack()
@@ -56,6 +59,12 @@ def inputChooserFrame(controller):
                                            'iterations = 400\n'
                                            'step len = 3\n'
                                            'cockroaches = 30', width=button_width, command=readTest, bg='red',
+                height=button_height+3).pack()
+    readFileTestWithNehButton = Button(root, text='Read from tai20_5short.txt \n'
+                                           'iterations = 400\n'
+                                           'step len = 3\n'
+                                           'cockroaches = 30\n'
+                                           'NEH = wlaczony', width=button_width, command=readTestWithNeh, bg='blue',
                 height=button_height+3).pack()
     mainloop()
 
@@ -138,7 +147,7 @@ def insertDataManuallyFrame2(controller):
 
     mainloop()
 
-def readFromFileFrame(controller, filename="none"):
+def readFromFileFrame(controller, isNehEnabled, filename="none"):
     root = Tk()
     root.title(title)
     if (filename == "none"):
@@ -176,7 +185,7 @@ def readFromFileFrame(controller, filename="none"):
         except ValueError:
             pass
         root.destroy()
-        parseFile(controller, file)
+        parseFile(controller, file, isNehEnabled)
 
     def back_button():
         print("Not implemented...")
@@ -191,7 +200,7 @@ def readFromFileFrame(controller, filename="none"):
     mainloop()
 
 
-def parseFile(controller, file):
+def parseFile(controller, file, isNehEnabled):
     print("Parsing input data...")
     pattern = re.compile(r'([0-9]+)')
     try: # nie umiem pythona
@@ -228,12 +237,12 @@ def parseFile(controller, file):
             print("iteracje: ", controller.iterations)
             print("step: ", controller.step_len)
             print("karaluchy: ", controller.cockroaches_num)
-            startFlowshop(controller)
+            startFlowshop(controller, isNehEnabled)
 
 
     except IndexError:
         pass
 
 
-def startFlowshop(controller):
-    flowshop.startFromGUI(controller)
+def startFlowshop(controller, isNehEnabled):
+    flowshop.startFromGUI(controller, isNehEnabled)

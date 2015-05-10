@@ -10,7 +10,7 @@ def calculate_cost(jobs, state):
             left = cost[i][j-1] if j > 0 else 0
             cost[i].append(job[j] + max(left, up))
 
-    return cost[len(state) - 1][len(jobs[0]) - 1]
+    return cost[len(state) - 1][len(jobs[state[0]]) - 1]
 
 # Step 1: Order the jobs by non-increasing sums of processing times on the machines
 # Return: sorted states descending
