@@ -23,9 +23,11 @@ def step(a, b):
         if a[i] != b[i]:
             j = a.index(b[i])
             a[i], a[j] = a[j], a[i]
+            return
 
 
 def swarm(jobs, states, steps, optimal_cost, optimal_state):
+    change = False
     for i, state_i in enumerate(states):
         for j, state_j in enumerate(states):
             cost_i = calculate_cost(jobs, state_i)
@@ -36,10 +38,12 @@ def swarm(jobs, states, steps, optimal_cost, optimal_state):
                     cost = calculate_cost(jobs, state_i)
                     if cost < optimal_cost:
                         optimal_cost, optimal_state = cost, state_i[:]
-    return optimal_cost
+                        change = True
+    return optimal_cost, change
 
 
 def disperse(states, jobs, optimal_cost, optimal_state):
+    change = False
     for i, state in enumerate(states):
         rand = range(len(jobs))
         shuffle(rand)
@@ -48,7 +52,8 @@ def disperse(states, jobs, optimal_cost, optimal_state):
             cost = calculate_cost(jobs, state)
             if cost < optimal_cost:
                 optimal_cost, optimal_state = cost, state[:]
-    return optimal_cost
+                change = True
+    return optimal_cost, change
 
 
 def ruthless(states, optimal_state):
@@ -61,6 +66,7 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
     states = []
     optimal_state = []
     optimal_cost = 999999999999999999
+    optimals = []
 
     # print('Times:')
     if jobTimes is None:
@@ -105,11 +111,30 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
 
     print(optimal_cost, optimal_state)
 
+    counter = 0
+
     for i in xrange(iterations):
         print optimal_cost
-        optimal_cost = swarm(jobs, states, steps, optimal_cost, optimal_state)
-        optimal_cost = disperse(states, jobs, optimal_cost, optimal_state)
+        optimal_cost, change_s = swarm(jobs, states, steps, optimal_cost, optimal_state)
+        optimal_cost, change_d = disperse(states, jobs, optimal_cost, optimal_state)
+
+        if not change_s and not change_d:
+            counter += 1
+            if counter > 300:
+                optimals.append((optimal_cost, optimal_state[:]))
+                a = randint(0, len(optimal_state) - 1)
+                b = randint(0, len(optimal_state) - 1)
+                optimal_state[a], optimal_state[b] = optimal_state[b], optimal_state[a]
+                optimal_cost = calculate_cost(jobs, optimal_state)
+                counter = 0
+        else:
+            counter = 0
+
         ruthless(states, optimal_state)
+
+    for i in optimals:
+        if i[0] < optimal_cost:
+            optimal_cost, optimal_state = i
 
     return (optimal_cost, optimal_state)
 
@@ -131,7 +156,8 @@ if __name__ == '__main__':
     machine_count = input()#'Number of machines: ')
     dat1 = datetime.datetime.now()
     r = cockroach(
-        iterations, steps, cockroach_count, job_count, machine_count, jobTimes=None
+        iterations, steps, cockroach_count, job_count, machine_count,
+        None, True
     )
     dat2 = datetime.datetime.now()
     print(dat2-dat1)
