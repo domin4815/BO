@@ -169,6 +169,7 @@ def startFromGUI(controller, isNehEnabled):
     print("JobTimes: ")
     print(controller.jobs)
 
+
     if (isNehEnabled == True):
         print "Running with NEH"
 

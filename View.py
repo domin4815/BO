@@ -1,9 +1,9 @@
 #!/usr/bin/python
 #  -*- coding: latin-1 -*-
+
 __author__ = 'domin4815'
 from Tkinter import *
 import flowshop
-import re
 from tkFileDialog import askopenfilename
 # CONFIG
 input_width = 26
@@ -25,11 +25,7 @@ def inputChooserFrame(controller):
 
     def readFromFileButton():
         root.destroy()
-
         readFromFileFrame(controller, isNehEnabled=False)
-        pass
-
-    def nahButton():
         pass
 
     def insertDataMAnuallyButton():
@@ -46,14 +42,9 @@ def inputChooserFrame(controller):
         readFromFileFrame(controller, isNehEnabled=True, filename="tai20_5short.txt")
 
 
-    #logo = PhotoImage(file="images/agh.png")
-    #w1 = Label(root, image=logo).pack()
-
-    nahButton = Button(root, text='NAH', width=button_width, command=nahButton, bg='green',
-                    height=button_height).pack()
     readFileButton = Button(root, text='Read from file', width=button_width, command=readFromFileButton, bg='sea green',
                     height=button_height).pack()
-    readFileButton = Button(root, text='Insert data manually', width=button_width, command=insertDataMAnuallyButton, bg='dark olive green',
+    insertDataManuallyButton = Button(root, text='Insert data manually', width=button_width, command=insertDataMAnuallyButton, bg='dark olive green',
                 height=button_height).pack()
     readFileTestButton = Button(root, text='Read from tai20_5short.txt \n'
                                            'iterations = 400\n'
@@ -108,6 +99,7 @@ def insertDataManuallyFrame1(controller):
 
     mainloop()
 
+
 def insertDataManuallyFrame2(controller):
     root = Tk()
     root.title("BO")
@@ -147,6 +139,7 @@ def insertDataManuallyFrame2(controller):
 
     mainloop()
 
+
 def readFromFileFrame(controller, isNehEnabled, filename="none"):
     root = Tk()
     root.title(title)
@@ -170,7 +163,6 @@ def readFromFileFrame(controller, isNehEnabled, filename="none"):
         r += 1
 
     def next_button():
-        #nie umiem pythona2
         try:
             controller.iterations = int(inputs[0].get())
         except ValueError:
@@ -185,7 +177,9 @@ def readFromFileFrame(controller, isNehEnabled, filename="none"):
         except ValueError:
             pass
         root.destroy()
-        parseFile(controller, file, isNehEnabled)
+        controller.isNehEnabled = True
+        controller.file = file
+        pass
 
     def back_button():
         print("Not implemented...")
@@ -200,49 +194,5 @@ def readFromFileFrame(controller, isNehEnabled, filename="none"):
     mainloop()
 
 
-def parseFile(controller, file, isNehEnabled):
-    print("Parsing input data...")
-    pattern = re.compile(r'([0-9]+)')
-    try: # nie umiem pythona
-        #plik z instancjami zawiera 10 roznych zestawow danych wejsciowych
-        while(file.readline()[0]=='n'): #number of jobs, number of machines, initial seed, upper bound and lower bound :
-            str = file.readline()
-            out2 = pattern.findall(str)
-
-            controller.jobs_num = int(out2[0])
-            controller.machines_num = int(out2[1])
-            if controller.iterations == 0:
-                controller.iterations = 400
-            if controller.step_len == 0:
-                controller.step_len = 3
-            if controller.cockroaches_num == 0:
-                controller.cockroaches_num = 30
-            initialSpeed = int(out2[2])
-            upperBound = int(out2[3])
-            liwerBound = int(out2[4])
-
-            jobsTab = []
-
-            for i in range(controller.jobs_num):
-                jobsTab.append([])
-
-            file.readline() #processing times :
-            for machineN in range(controller.machines_num):
-                str = file.readline()
-                jobsTimesOnMachine = pattern.findall(str)
-                for jobN in range(controller.jobs_num):
-                    jobsTab[jobN].append(int(jobsTimesOnMachine[jobN]))
-            controller.jobs = jobsTab
-            print("flowshop wystartowany z parametrami:")
-            print("iteracje: ", controller.iterations)
-            print("step: ", controller.step_len)
-            print("karaluchy: ", controller.cockroaches_num)
-            startFlowshop(controller, isNehEnabled)
-
-
-    except IndexError:
-        pass
-
-
-def startFlowshop(controller, isNehEnabled):
-    flowshop.startFromGUI(controller, isNehEnabled)
+def showGraph(data):
+    pass
