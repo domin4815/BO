@@ -62,6 +62,7 @@ def ruthless(states, optimal_state):
 
 
 def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobTimes, isNehEnabled):
+    isNehEnabled = False
     jobs = {}
     states = []
     optimal_state = []
@@ -120,7 +121,7 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
 
         if not change_s and not change_d:
             counter += 1
-            if counter > 300:
+            if counter > 50:
                 optimals.append((optimal_cost, optimal_state[:]))
                 a = randint(0, len(optimal_state) - 1)
                 b = randint(0, len(optimal_state) - 1)
@@ -143,7 +144,7 @@ def run_cockroaches(iterations, steps, cockroach_count, job_count,
     machine_count, job_times):
     job_times = neh.neh(job_times)
     r = cockroach(iterations, steps, cockroach_count, job_count, machine_count,
-        job_times)
+        job_times, True)
     print(r[0], r[1])
 
 
@@ -180,7 +181,7 @@ def startFromGUI(controller, isNehEnabled):
     else:
         r = cockroach(
         controller.iterations, controller.step_len, controller.cockroaches_num, controller.jobs_num,
-        controller.machines_num, jobTimes=controller.jobs, isNehEnabled = isNehEnabled
+        controller.machines_num, jobTimes=controller.jobs, isNehEnabled=isNehEnabled
         )
 
     dat2 = datetime.datetime.now()

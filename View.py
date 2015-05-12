@@ -42,20 +42,22 @@ def inputChooserFrame(controller):
         readFromFileFrame(controller, isNehEnabled=True, filename="tai20_5short.txt")
 
 
-    readFileButton = Button(root, text='Read from file', width=button_width, command=readFromFileButton, bg='sea green',
+    readFileButton = Button(root, text='Read from file', width=button_width,
+                    command=readFromFileButton, bg='sea green',
                     height=button_height).pack()
-    insertDataManuallyButton = Button(root, text='Insert data manually', width=button_width, command=insertDataMAnuallyButton, bg='dark olive green',
+    insertDataManuallyButton = Button(root, text='Insert data manually', width=button_width,
+                command=insertDataMAnuallyButton, bg='dark olive green',
                 height=button_height).pack()
     readFileTestButton = Button(root, text='Read from tai20_5short.txt \n'
                                            'iterations = 400\n'
                                            'step len = 3\n'
-                                           'cockroaches = 30', width=button_width, command=readTest, bg='red',
+                                           'cockroaches = 30', width=button_width, command=readTest, bg='sea green',
                 height=button_height+3).pack()
     readFileTestWithNehButton = Button(root, text='Read from tai20_5short.txt \n'
                                            'iterations = 400\n'
                                            'step len = 3\n'
                                            'cockroaches = 30\n'
-                                           'NEH = wlaczony', width=button_width, command=readTestWithNeh, bg='blue',
+                                           'NEH = wlaczony', width=button_width, command=readTestWithNeh, bg='dark olive green',
                 height=button_height+3).pack()
     mainloop()
 
@@ -85,8 +87,7 @@ def insertDataManuallyFrame1(controller):
             controller.jobs_num = int(inputs[3].get())
             controller.machines_num = int(inputs[4].get())
         except ValueError:
-            print("Value error")
-        #controler.print_parameters()
+            pass
         root.destroy()
         insertDataManuallyFrame2(controller)
 
@@ -117,9 +118,13 @@ def insertDataManuallyFrame2(controller):
     def go_button():
         try:
             for i in range(0, controller.jobs_num):
-                controller.jobs += [int(inputs[i].get())]
+                inputsStr = inputs[i].get().split(" ")
+                inputsInt = []
+                for ia in xrange(len(inputsStr)):
+                    inputsInt.append(int(inputsStr[ia]))
+                controller.jobs += [inputsInt]
         except ValueError:
-            print("Value error")
+            print(controller.jobs)
         root.destroy()
         flowshop.run_cockroaches(
             controller.iterations, controller.step_len,
@@ -152,8 +157,8 @@ def readFromFileFrame(controller, isNehEnabled, filename="none"):
     ]
     inputs = []
     r = 0
-    Label(root, text="Insert data or click start", width=label_width, height=label_height, bg="green").grid(row=r, column=0)
-    Label(root, text="to run with default values", width=label_width, height=label_height, bg="green").grid(row=r, column=1)
+    Label(root, text="Insert data or click start", width=label_width, height=label_height).grid(row=r, column=0)
+    Label(root, text="to run with default values", width=label_width, height=label_height).grid(row=r, column=1)
     r+=1
     for c in strings:
         Label(root, text=c, width=label_width, height=label_height).grid(row=r, column=0)

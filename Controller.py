@@ -44,7 +44,7 @@ def parseFileAndRun(controller):
 
 
 def startFlowshop(controller, isNehEnabled):
-    flowshop.startFromGUI(controller, isNehEnabled)
+    flowshop.startFromGUI(controller, False)
 
 
 class ProgramController(object):
@@ -66,6 +66,9 @@ class ProgramController(object):
 if __name__ == '__main__':
     controller = ProgramController(0,0,0,0,0,[])
     View.inputChooserFrame(controller)
-    parseFileAndRun(controller)
+    if(controller.file != None):
+        parseFileAndRun(controller)
+    else:
+        startFlowshop(controller, controller.isNehEnabled)
 
 
