@@ -3,6 +3,8 @@ import pprint
 import datetime
 import neh
 import Controller
+import matplotlib.pyplot as plt
+import numpy
 
 
 def calculate_cost(jobs, state):
@@ -62,7 +64,6 @@ def ruthless(states, optimal_state):
 
 
 def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobTimes, isNehEnabled):
-    isNehEnabled = False
     jobs = {}
     states = []
     optimal_state = []
@@ -113,9 +114,27 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
     print(optimal_cost, optimal_state)
 
     counter = 0
+    makespan_table = []
+    xData = []
+    yData = []
+    # plt.ion()
+
+    # fig = plt.figure()
+    # ax = fig.add_subplot(111)
+    # line1, = ax.plot([], [],'-k',label='black')
 
     for i in xrange(iterations):
+        yData.append(optimal_cost)
+        xData.append(i)
+        # if iterations % 1 == 0: #dynamicznie rysowany wykres
+        #     line1.set_ydata(yData)
+        #     line1.set_xdata(range(len(yData)))
+        #     ax.relim()
+        #     ax.autoscale_view()
+        #     plt.draw()
+
         print optimal_cost
+        makespan_table.append(optimal_cost)
         optimal_cost, change_s = swarm(jobs, states, steps, optimal_cost, optimal_state)
         optimal_cost, change_d = disperse(states, jobs, optimal_cost, optimal_state)
 
@@ -132,12 +151,10 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
             counter = 0
 
         ruthless(states, optimal_state)
-
     for i in optimals:
         if i[0] < optimal_cost:
             optimal_cost, optimal_state = i
-
-    return (optimal_cost, optimal_state)
+    return (optimal_cost, optimal_state, makespan_table)
 
 
 def run_cockroaches(iterations, steps, cockroach_count, job_count,
@@ -165,26 +182,28 @@ if __name__ == '__main__':
 
     print(r[0], r[1])
 
-def startFromGUI(controller, isNehEnabled):
+def startFromGUI(controller):
     dat1 = datetime.datetime.now()
     print("JobTimes: ")
     print(controller.jobs)
 
 
-    if (isNehEnabled == True):
+    if (controller.isNehEnabled == True):
         print "Running with NEH"
-
+        r = []
         r = cockroach(
         controller.iterations, controller.step_len, controller.cockroaches_num, controller.jobs_num,
-        controller.machines_num, jobTimes=controller.jobs, isNehEnabled = isNehEnabled
+        controller.machines_num, jobTimes=controller.jobs,isNehEnabled=controller.isNehEnabled
         )
     else:
         r = cockroach(
         controller.iterations, controller.step_len, controller.cockroaches_num, controller.jobs_num,
-        controller.machines_num, jobTimes=controller.jobs, isNehEnabled=isNehEnabled
+        controller.machines_num, jobTimes=controller.jobs, isNehEnabled=controller.isNehEnabled
         )
 
     dat2 = datetime.datetime.now()
     print(dat2-dat1)
-
     print(r[0], r[1])
+    print(r)
+
+    return r, dat2

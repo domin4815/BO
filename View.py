@@ -1,5 +1,5 @@
-#!/usr/bin/python
 #  -*- coding: latin-1 -*-
+import pylab
 
 __author__ = 'domin4815'
 from Tkinter import *
@@ -21,11 +21,12 @@ title = "BO"
 def inputChooserFrame(controller):
     root = Tk()
     root.title(title)
+
     # width x height + x_offset + y_offset:
 
     def readFromFileButton():
         root.destroy()
-        readFromFileFrame(controller, isNehEnabled=False)
+        readFromFileFrame(controller)
         pass
 
     def insertDataMAnuallyButton():
@@ -35,30 +36,26 @@ def inputChooserFrame(controller):
 
     def readTest():
         root.destroy()
-        readFromFileFrame(controller, isNehEnabled=False, filename="tai20_5short.txt")
+        readFromFileFrame(controller, filename="tai20_5short.txt")
 
-    def readTestWithNeh():
-        root.destroy()
-        readFromFileFrame(controller, isNehEnabled=True, filename="tai20_5short.txt")
-
+    Label(root, text='\nFlow shop problem... \n'
+                     '... by cockroach algorithm.\n', width=label_width, height=label_height+2).pack()
 
     readFileButton = Button(root, text='Read from file', width=button_width,
-                    command=readFromFileButton, bg='sea green',
+                    command=readFromFileButton,
                     height=button_height).pack()
     insertDataManuallyButton = Button(root, text='Insert data manually', width=button_width,
-                command=insertDataMAnuallyButton, bg='dark olive green',
+                command=insertDataMAnuallyButton,
                 height=button_height).pack()
-    readFileTestButton = Button(root, text='Read from tai20_5short.txt \n'
-                                           'iterations = 400\n'
-                                           'step len = 3\n'
-                                           'cockroaches = 30', width=button_width, command=readTest, bg='sea green',
-                height=button_height+3).pack()
-    readFileTestWithNehButton = Button(root, text='Read from tai20_5short.txt \n'
-                                           'iterations = 400\n'
-                                           'step len = 3\n'
-                                           'cockroaches = 30\n'
-                                           'NEH = wlaczony', width=button_width, command=readTestWithNeh, bg='dark olive green',
-                height=button_height+3).pack()
+    readFileTestButton = Button(root, text='tai20_5short.txt', width=button_width, command=readTest, bg="red",
+                height=button_height).pack()
+    helpButton = Button(root, text='Help', width=button_width, command=readTest,
+                height=button_height).pack()
+    aboutButton = Button(root, text='About', width=button_width, command=readTest,
+                height=button_height).pack()
+    exitButton = Button(root, text='Exit', width=button_width, command=readTest,
+                height=button_height).pack()
+
     mainloop()
 
 
@@ -145,27 +142,37 @@ def insertDataManuallyFrame2(controller):
     mainloop()
 
 
-def readFromFileFrame(controller, isNehEnabled, filename="none"):
+def readFromFileFrame(controller, filename="none"):
     root = Tk()
     root.title(title)
     if (filename == "none"):
         filename = askopenfilename()
     file = open(filename, 'r')
 
-    strings = [
-        'Iterations', 'Step len', 'Number of cockroaches'
-    ]
     inputs = []
     r = 0
-    Label(root, text="Insert data or click start", width=label_width, height=label_height).grid(row=r, column=0)
-    Label(root, text="to run with default values", width=label_width, height=label_height).grid(row=r, column=1)
+    nehCheckboxInt = IntVar()
+    Label(root, text="Run NEH before start", width=label_width, height=label_height).grid(row=r, column=0)
+    Checkbutton(root, text="NEH", variable=nehCheckboxInt).grid(row=r, column=1)
     r+=1
-    for c in strings:
-        Label(root, text=c, width=label_width, height=label_height).grid(row=r, column=0)
-        T = Entry(root)
-        inputs.append(T)
-        T.grid(row=r, column=1)
-        r += 1
+    Label(root, text='Iterations', width=label_width, height=label_height).grid(row=r, column=0)
+    T1 = Entry(root)
+    T1.insert(0, controller.iterations)
+    inputs.append(T1)
+    T1.grid(row=r, column=1)
+    r += 1
+    Label(root, text='Step len', width=label_width, height=label_height).grid(row=r, column=0)
+    T2 = Entry(root)
+    T2.insert(0, controller.step_len)
+    inputs.append(T2)
+    T2.grid(row=r, column=1)
+    r += 1
+    Label(root, text='Cockroaches', width=label_width, height=label_height).grid(row=r, column=0)
+    T3 = Entry(root)
+    T3.insert(0, controller.step_len)
+    inputs.append(T3)
+    T3.grid(row=r, column=1)
+    r += 1
 
     def next_button():
         try:
@@ -182,7 +189,10 @@ def readFromFileFrame(controller, isNehEnabled, filename="none"):
         except ValueError:
             pass
         root.destroy()
-        controller.isNehEnabled = True
+        if nehCheckboxInt.get() == 0:
+            controller.isNehEnabled = False
+        else:
+            controller.isNehEnabled = True
         controller.file = file
         pass
 
@@ -198,6 +208,60 @@ def readFromFileFrame(controller, isNehEnabled, filename="none"):
 
     mainloop()
 
+#jako arg lista [controler]
+def presentSolutionsFrame(listOfCtrls):
+    root = Tk()
+    root.title(title + " - results") #
+    r=0 #row
+    Label(root, text="Parameter", width=label_width, height=label_height).grid(row=r, column=0)
+    Label(root, text="Result", width=(label_width + len(listOfCtrls) + 15), height=label_height).grid(row=r, column=1)
+    Label(root, text="Given", width=label_width, height=label_height).grid(row=r, column=2)
+    r += 1
 
-def showGraph(data):
-    pass
+    for ctrl in listOfCtrls:
+        Label(root, text="Makespan ", width=label_width, height=label_height).grid(row=r, column=0)
+        Label(root, text=ctrl.minMakespan, width=label_width, height=label_height).grid(row=r, column=1)
+        Label(root, text="Not implemented", width=label_width, height=label_height).grid(row=r, column=2)
+
+        r += 1
+        Label(root, text="Order ", width=label_width, height=label_height).grid(row=r, column=0)
+        Label(root, text=ctrl.order, width=label_width, height=label_height).grid(row=r, column=1)
+        Label(root, text="Not implemented", width=label_width, height=label_height).grid(row=r, column=2)
+        r += 1
+
+        Label(root, text="Algorithm time ", width=label_width, height=label_height).grid(row=r, column=0)
+        Label(root, text=ctrl.time, width=label_width, height=label_height).grid(row=r, column=1)
+        Label(root, text="none", width=label_width, height=label_height).grid(row=r, column=2)
+        r += 1
+
+        Label(root, text="With NEH ", width=label_width, height=label_height).grid(row=r, column=0)
+        Label(root, text=ctrl.isNehEnabled, width=label_width, height=label_height).grid(row=r, column=1)
+        Label(root, text="none", width=label_width, height=label_height).grid(row=r, column=2)
+        r += 1
+        #dolozyc jeszcze pare statystyk plus wizualizacje
+
+
+    def next_button():
+
+        pass
+
+    def back_button():
+        print("Not implemented...")
+        pass
+    def showPlots():
+        for ctrl in listOfCtrls:
+            pylab.plot(ctrl.makespanTable)
+            pylab.show()
+            #dodac tytul
+        pass
+
+
+    buttonBack = Button(root, text='Again', width=button_width, command=back_button,
+                    height=button_height).grid(row=r, column=0)
+    buttonShowPlots = Button(root, text='Show Plots', width=button_width, command=showPlots,
+                    height=button_height).grid(row=r, column=1)
+    button = Button(root, text='Exit', width=button_width, command=next_button,
+                    height=button_height).grid(row=r, column=2)
+    r +=1
+
+    mainloop()
