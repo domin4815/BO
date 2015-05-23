@@ -31,7 +31,7 @@ def inputChooserFrame(controller):
 
     def insertDataMAnuallyButton():
         root.destroy()
-        insertDataManuallyFrame1(controller)
+        #insertDataManuallyFrame1(controller)
         pass
 
     def readTest():
@@ -99,6 +99,7 @@ def insertDataManuallyFrame1(controller):
 
 
 def insertDataManuallyFrame2(controller):
+    print("TODO!! TO JEST ZLE ZROBIONE!!!!!!!!!!!!!!!!!!!")
     root = Tk()
     root.title("BO")
     inputs = []
@@ -152,8 +153,12 @@ def readFromFileFrame(controller, filename="none"):
     inputs = []
     r = 0
     nehCheckboxInt = IntVar()
+    graphCheckboxInt = IntVar()
     Label(root, text="Run NEH before start", width=label_width, height=label_height).grid(row=r, column=0)
     Checkbutton(root, text="NEH", variable=nehCheckboxInt).grid(row=r, column=1)
+    r+=1
+    Label(root, text="Show graph dynamically\n ", width=label_width, height=label_height).grid(row=r, column=0)
+    Checkbutton(root, text="Graph", variable=graphCheckboxInt).grid(row=r, column=1)
     r+=1
     Label(root, text='Iterations', width=label_width, height=label_height).grid(row=r, column=0)
     T1 = Entry(root)
@@ -193,6 +198,11 @@ def readFromFileFrame(controller, filename="none"):
             controller.isNehEnabled = False
         else:
             controller.isNehEnabled = True
+
+        if graphCheckboxInt.get() == 0:
+            controller.showDinamicallyGraph = False
+        else:
+            controller.showDinamicallyGraph = True
         controller.file = file
         pass
 

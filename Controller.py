@@ -7,6 +7,7 @@ __author__ = 'domin4815'
 class ProgramController(object):
 
     def __init__(self, iterations, step, cs, jobs, mach, jobsTab):
+        #input
         self.iterations = iterations
         self.step_len = step
         self.cockroaches_num = cs
@@ -15,6 +16,8 @@ class ProgramController(object):
         self.jobs = jobsTab
         self.file = None
         self.isNehEnabled = False
+        #other parameters
+        self.showDinamicallyGraph = None
         #solution
         self.makespanTable = []
         self.time = None

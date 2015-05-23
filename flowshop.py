@@ -63,7 +63,7 @@ def ruthless(states, optimal_state):
     states[index] = optimal_state[:]
 
 
-def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobTimes, isNehEnabled):
+def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobTimes, isNehEnabled, showDynamicallyGraph):
     jobs = {}
     states = []
     optimal_state = []
@@ -117,21 +117,23 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
     makespan_table = []
     xData = []
     yData = []
-    # plt.ion()
-
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111)
-    # line1, = ax.plot([], [],'-k',label='black')
+    plt.ion()
+    if showDynamicallyGraph: #na szybko ten if
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        line1, = ax.plot([], [],'-k',label='black')
 
     for i in xrange(iterations):
         yData.append(optimal_cost)
         xData.append(i)
-        # if iterations % 1 == 0: #dynamicznie rysowany wykres
-        #     line1.set_ydata(yData)
-        #     line1.set_xdata(range(len(yData)))
-        #     ax.relim()
-        #     ax.autoscale_view()
-        #     plt.draw()
+        if showDynamicallyGraph:
+           #dynamicznie rysowany wykres
+            line1.set_ydata(yData)
+            line1.set_xdata(range(len(yData)))
+            ax.relim()
+            ax.autoscale_view()
+            plt.draw()
+            plt.xlim([0, iterations])
 
         print optimal_cost
         makespan_table.append(optimal_cost)
@@ -161,7 +163,7 @@ def run_cockroaches(iterations, steps, cockroach_count, job_count,
     machine_count, job_times):
     job_times = neh.neh(job_times)
     r = cockroach(iterations, steps, cockroach_count, job_count, machine_count,
-        job_times, True)
+        job_times, True, False)
     print(r[0], r[1])
 
 
@@ -175,7 +177,7 @@ if __name__ == '__main__':
     dat1 = datetime.datetime.now()
     r = cockroach(
         iterations, steps, cockroach_count, job_count, machine_count,
-        None, True
+        None, True, False
     )
     dat2 = datetime.datetime.now()
     print(dat2-dat1)
@@ -193,12 +195,14 @@ def startFromGUI(controller):
         r = []
         r = cockroach(
         controller.iterations, controller.step_len, controller.cockroaches_num, controller.jobs_num,
-        controller.machines_num, jobTimes=controller.jobs,isNehEnabled=controller.isNehEnabled
+        controller.machines_num, jobTimes=controller.jobs,isNehEnabled=controller.isNehEnabled,
+        showDynamicallyGraph=controller.showDinamicallyGraph
         )
     else:
         r = cockroach(
         controller.iterations, controller.step_len, controller.cockroaches_num, controller.jobs_num,
-        controller.machines_num, jobTimes=controller.jobs, isNehEnabled=controller.isNehEnabled
+        controller.machines_num, jobTimes=controller.jobs, isNehEnabled=controller.isNehEnabled,
+        showDynamicallyGraph=controller.showDinamicallyGraph
         )
 
     dat2 = datetime.datetime.now()
