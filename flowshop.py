@@ -145,7 +145,7 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
 
         if not change_s and not change_d:
             counter += 1
-            if counter > 50:
+            if counter > 100:
                 optimals.append((optimal_cost, optimal_state[:]))
                 a = randint(0, len(optimal_state) - 1)
                 b = randint(0, len(optimal_state) - 1)

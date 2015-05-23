@@ -1,5 +1,5 @@
 #  -*- coding: latin-1 -*-
-import pylab
+import matplotlib.pyplot as plt
 
 __author__ = 'domin4815'
 from Tkinter import *
@@ -38,6 +38,11 @@ def inputChooserFrame(controller):
         root.destroy()
         readFromFileFrame(controller, filename="tai20_5short.txt")
 
+    def exit_program():
+        root.destroy()
+        controller.exit_now = True
+        pass
+
     Label(root, text='\nFlow shop problem... \n'
                      '... by cockroach algorithm.\n', width=label_width, height=label_height+2).pack()
 
@@ -53,7 +58,7 @@ def inputChooserFrame(controller):
                 height=button_height).pack()
     aboutButton = Button(root, text='About', width=button_width, command=readTest,
                 height=button_height).pack()
-    exitButton = Button(root, text='Exit', width=button_width, command=readTest,
+    exitButton = Button(root, text='Exit', width=button_width, command=exit_program,
                 height=button_height).pack()
 
     mainloop()
@@ -219,16 +224,18 @@ def readFromFileFrame(controller, filename="none"):
     mainloop()
 
 #jako arg lista [controler]
-def presentSolutionsFrame(listOfCtrls):
+def presentSolutionsFrame(list_of_solutions, controller):
+    print(list_of_solutions[0].launch_again)
+
     root = Tk()
     root.title(title + " - results") #
     r=0 #row
     Label(root, text="Parameter", width=label_width, height=label_height).grid(row=r, column=0)
-    Label(root, text="Result", width=(label_width + len(listOfCtrls) + 15), height=label_height).grid(row=r, column=1)
+    Label(root, text="Result", width=(label_width + len(list_of_solutions) + 15), height=label_height).grid(row=r, column=1)
     Label(root, text="Given", width=label_width, height=label_height).grid(row=r, column=2)
     r += 1
 
-    for ctrl in listOfCtrls:
+    for ctrl in list_of_solutions:
         Label(root, text="Makespan ", width=label_width, height=label_height).grid(row=r, column=0)
         Label(root, text=ctrl.minMakespan, width=label_width, height=label_height).grid(row=r, column=1)
         Label(root, text="Not implemented", width=label_width, height=label_height).grid(row=r, column=2)
@@ -251,26 +258,32 @@ def presentSolutionsFrame(listOfCtrls):
         #dolozyc jeszcze pare statystyk plus wizualizacje
 
 
-    def next_button():
+    def exit_button():
+        root.destroy()
+        pass
 
+    def again_button():
+        root.destroy()
+        plt.close()
+        controller.launch_again = True
         pass
 
     def back_button():
         print("Not implemented...")
         pass
     def showPlots():
-        for ctrl in listOfCtrls:
-            pylab.plot(ctrl.makespanTable)
-            pylab.show()
+        for ctrl in list_of_solutions:
+            plt.plot(ctrl.makespanTable)
+            plt.show()
             #dodac tytul
         pass
 
 
-    buttonBack = Button(root, text='Again', width=button_width, command=back_button,
+    againBack = Button(root, text='Again', width=button_width, command=again_button,
                     height=button_height).grid(row=r, column=0)
     buttonShowPlots = Button(root, text='Show Plots', width=button_width, command=showPlots,
                     height=button_height).grid(row=r, column=1)
-    button = Button(root, text='Exit', width=button_width, command=next_button,
+    button = Button(root, text='Exit', width=button_width, command=exit_button,
                     height=button_height).grid(row=r, column=2)
     r +=1
 

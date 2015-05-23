@@ -20,6 +20,8 @@ class ProgramController(object):
         self.showDinamicallyGraph = None
         self.upperbound = 99999
         self.lowerbound = 0
+        self.launch_again = True
+        self.exit_now = False
         #solution
         self.makespanTable = []
         self.time = None
@@ -80,25 +82,22 @@ def parseFileAndRun(controller):
 
     except IndexError:
         pass
-    View.presentSolutionsFrame(solutionsTable)
+    View.presentSolutionsFrame(solutionsTable, controller)
     pass
-
-
-
-
-
-
 
 if __name__ == '__main__':
     controller = ProgramController(100,4,30,20,5,[])
-    View.inputChooserFrame(controller)
-    if(controller.file != None):
-        parseFileAndRun(controller)
-    else:
-        r = flowshop.startFromGUI(controller)
-        controller.makespanTable = r[0][2]
-        controller.time = r[1]
-        controller.order = r[0][1]
+    while(controller.launch_again):
+        controller.launch_again = False
+        View.inputChooserFrame(controller)
+        if not controller.exit_now: #gdy ktos nie wprowadzil danych
+            if(controller.file != None):
+                parseFileAndRun(controller)
+            else:
+                r = flowshop.startFromGUI(controller)
+                controller.makespanTable = r[0][2]
+                controller.time = r[1]
+                controller.order = r[0][1]
 
 
 
