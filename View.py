@@ -37,7 +37,7 @@ def inputChooserFrame(controller):
 
     def insertDataMAnuallyButton():
         root.destroy()
-        #insertDataManuallyFrame1(controller)
+        insertDataManuallyFrame1(controller)
         pass
 
     def readTest():
@@ -84,6 +84,15 @@ def insertDataManuallyFrame1(controller):
     root.title("BO")
 
     r = 0
+    nehCheckboxInt = IntVar()
+    graphCheckboxInt = IntVar()
+    Label(root, text="Run NEH before start", width=label_width, height=label_height).grid(row=r, column=0)
+    Checkbutton(root, text=" NEH ", variable=nehCheckboxInt).grid(row=r, column=1)
+    r+=1
+    Label(root, text="Show graph dynamically", width=label_width, height=label_height).grid(row=r, column=0)
+    Checkbutton(root, text="Graph", variable=graphCheckboxInt).grid(row=r, column=1)
+    r +=1
+
     for c in strings:
         Label(root, text=c, width=label_width, height=label_height).grid(row=r, column=0)
         T = Entry(root)
@@ -92,6 +101,16 @@ def insertDataManuallyFrame1(controller):
         r = r + 1
 
     def next_button():
+        if nehCheckboxInt.get() == 0:
+            controller.isNehEnabled = False
+        else:
+            controller.isNehEnabled = True
+
+        if graphCheckboxInt.get() == 0:
+            controller.showDinamicallyGraph = False
+        else:
+            controller.showDinamicallyGraph = True
+
         try:
             controller.iterations = int(inputs[0].get())
             controller.step_len = int(inputs[1].get())
@@ -103,12 +122,18 @@ def insertDataManuallyFrame1(controller):
         root.destroy()
         insertDataManuallyFrame2(controller)
 
-    button = Button(root, text='Next', width=button_width, command=next_button,
-                    height=button_height).grid(row=r, column=0)
+    def back_button():
+        root.destroy()
+        inputChooserFrame(controller)
+        pass
+
     button2 = Button(
-        root, text='Next with \ndefault values',
-        width=button_width, command=next_button, height=button_height
-    ).grid(row=r, column=1)
+        root, text='< Back',
+        width=button_width, command=back_button, height=button_height
+    ).grid(row=r, column=0)
+
+    button = Button(root, text='Next >', width=button_width, command=next_button,
+                    height=button_height).grid(row=r, column=1)
 
     mainloop()
 
@@ -140,24 +165,31 @@ def help_frame():
     mainloop()
 
 def insertDataManuallyFrame2(controller):
-    print("TODO!! TO JEST ZLE ZROBIONE!!!!!!!!!!!!!!!!!!!")
     root = Tk()
-    root.title("BO")
+    root.title(title)
     inputs = []
     r = 0
+
     for i in xrange(0, controller.jobs_num):
         Label(root, text='Job #{0} time'.format(str(i + 1)), width=label_width,
               height=label_height).grid(row=r, column=0)
-        T = Entry(root)
-        T.insert(0, str(i + 7))
-        inputs.append(T)
-        T.grid(row=r, column=1)
+        entryTab = []
+        for m in range(controller.machines_num):
+            T = Entry(root)
+            T.config(width=4)
+            T.grid(row=r, column=m + 2)
+            #T.insert(0, str(i + 7))
+            entryTab.append(T)
+        inputs.append(entryTab)
         r = r + 1
 
     def go_button():
         try:
             for i in range(0, controller.jobs_num):
-                inputsStr = inputs[i].get().split(" ")
+                inputsStr = []
+                for i2 in range(controller.machines_num):
+                    inputsStr.append(inputs[i][i2].get())
+
                 inputsInt = []
                 for ia in xrange(len(inputsStr)):
                     inputsInt.append(int(inputsStr[ia]))
@@ -196,9 +228,9 @@ def readFromFileFrame(controller, filename="none"):
     nehCheckboxInt = IntVar()
     graphCheckboxInt = IntVar()
     Label(root, text="Run NEH before start", width=label_width, height=label_height).grid(row=r, column=0)
-    Checkbutton(root, text="NEH", variable=nehCheckboxInt).grid(row=r, column=1)
+    Checkbutton(root, text=" NEH ", variable=nehCheckboxInt).grid(row=r, column=1)
     r+=1
-    Label(root, text="Show graph dynamically\n ", width=label_width, height=label_height).grid(row=r, column=0)
+    Label(root, text="Show graph dynamically  ", width=label_width, height=label_height).grid(row=r, column=0)
     Checkbutton(root, text="Graph", variable=graphCheckboxInt).grid(row=r, column=1)
     r+=1
     Label(root, text='Iterations', width=label_width, height=label_height).grid(row=r, column=0)
