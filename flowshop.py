@@ -210,6 +210,6 @@ def startFromGUI(controller):
     dat2 = datetime.datetime.now()
     print(dat2-dat1)
     print(r[0], r[1])
-    print(r)
+    #print(r)
 
     return r, dat2

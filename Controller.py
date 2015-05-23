@@ -94,10 +94,25 @@ if __name__ == '__main__':
             if(controller.file != None):
                 parseFileAndRun(controller)
             else:
+                print("flowshop startuje z parametrami:")
+                print("iteracje: ", controller.iterations)
+                print("step: ", controller.step_len)
+                print("karaluchy: ", controller.cockroaches_num)
                 r = flowshop.startFromGUI(controller)
                 controller.makespanTable = r[0][2]
                 controller.time = r[1]
                 controller.order = r[0][1]
+                solutionKeeperControler = ProgramController(controller.iterations,controller.step_len,
+                                                        controller.cockroaches_num,controller.jobs_num,
+                                                        controller.machines_num,controller.jobs)
+                solutionKeeperControler.isNehEnabled = controller.isNehEnabled
+                solutionKeeperControler.minMakespan = r[0][0]
+                solutionKeeperControler.makespanTable = r[0][2]
+                solutionKeeperControler.time = r[1]
+                solutionKeeperControler.order = r[0][1]
+                solutionsTable = []
+                solutionsTable.append(solutionKeeperControler)
+                View.presentSolutionsFrame(solutionsTable, controller)
 
 
 
