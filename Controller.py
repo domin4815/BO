@@ -18,6 +18,8 @@ class ProgramController(object):
         self.isNehEnabled = False
         #other parameters
         self.showDinamicallyGraph = None
+        self.upperbound = 99999
+        self.lowerbound = 0
         #solution
         self.makespanTable = []
         self.time = None
@@ -48,8 +50,8 @@ def parseFileAndRun(controller):
             if controller.cockroaches_num == 0:
                 controller.cockroaches_num = 30
             initialSpeed = int(out2[2])
-            upperBound = int(out2[3])
-            liwerBound = int(out2[4])
+            controller.upperbound = int(out2[3])
+            controller.lowerbound = int(out2[4])
             jobsTab = []
             for i in range(controller.jobs_num):
                 jobsTab.append([])

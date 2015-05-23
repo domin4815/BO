@@ -5,7 +5,7 @@ import neh
 import Controller
 import matplotlib.pyplot as plt
 import numpy
-
+import time
 
 def calculate_cost(jobs, state):
     cost = [[] for i in xrange(len(jobs))]
@@ -63,12 +63,13 @@ def ruthless(states, optimal_state):
     states[index] = optimal_state[:]
 
 
-def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobTimes, isNehEnabled, showDynamicallyGraph):
+def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobTimes, isNehEnabled, showDynamicallyGraph, controller):
     jobs = {}
     states = []
     optimal_state = []
     optimal_cost = 999999999999999999
     optimals = []
+
 
     # print('Times:')
     if jobTimes is None:
@@ -122,6 +123,9 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
         fig = plt.figure()
         ax = fig.add_subplot(111)
         line1, = ax.plot([], [],'-k',label='black')
+        plt.plot([0, controller.iterations], [controller.upperbound, controller.upperbound], 'r')
+        plt.plot([0, controller.iterations], [controller.lowerbound, controller.lowerbound], 'g')
+        plt.xlim([0, controller.iterations])
 
     for i in xrange(iterations):
         yData.append(optimal_cost)
@@ -133,7 +137,6 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
             ax.relim()
             ax.autoscale_view()
             plt.draw()
-            plt.xlim([0, iterations])
 
         print optimal_cost
         makespan_table.append(optimal_cost)
@@ -189,20 +192,19 @@ def startFromGUI(controller):
     print("JobTimes: ")
     print(controller.jobs)
 
-
     if (controller.isNehEnabled == True):
         print "Running with NEH"
         r = []
         r = cockroach(
         controller.iterations, controller.step_len, controller.cockroaches_num, controller.jobs_num,
         controller.machines_num, jobTimes=controller.jobs,isNehEnabled=controller.isNehEnabled,
-        showDynamicallyGraph=controller.showDinamicallyGraph
+        showDynamicallyGraph=controller.showDinamicallyGraph, controller = controller
         )
     else:
         r = cockroach(
         controller.iterations, controller.step_len, controller.cockroaches_num, controller.jobs_num,
         controller.machines_num, jobTimes=controller.jobs, isNehEnabled=controller.isNehEnabled,
-        showDynamicallyGraph=controller.showDinamicallyGraph
+        showDynamicallyGraph=controller.showDinamicallyGraph, controller=controller
         )
 
     dat2 = datetime.datetime.now()
