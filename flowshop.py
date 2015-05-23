@@ -127,7 +127,7 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
         yData.append(optimal_cost)
         xData.append(i)
         if showDynamicallyGraph:
-           #dynamicznie rysowany wykres
+           #dynamicznie rysowany wykres 1
             line1.set_ydata(yData)
             line1.set_xdata(range(len(yData)))
             ax.relim()
