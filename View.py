@@ -18,6 +18,9 @@ label_width = 23
 title = "BO"
 
 
+
+
+
 def inputChooserFrame(controller):
     root = Tk()
     root.title(title)
@@ -27,6 +30,9 @@ def inputChooserFrame(controller):
     def readFromFileButton():
         root.destroy()
         readFromFileFrame(controller)
+        pass
+    def help_button_function():
+        help_frame()
         pass
 
     def insertDataMAnuallyButton():
@@ -43,6 +49,10 @@ def inputChooserFrame(controller):
         controller.exit_now = True
         pass
 
+    def about():
+        aboutFrame()
+        pass
+
     Label(root, text='\nFlow shop problem... \n'
                      '... by cockroach algorithm.\n', width=label_width, height=label_height+2).pack()
 
@@ -54,9 +64,9 @@ def inputChooserFrame(controller):
                 height=button_height).pack()
     readFileTestButton = Button(root, text='tai20_5short.txt', width=button_width, command=readTest, bg="red",
                 height=button_height).pack()
-    helpButton = Button(root, text='Help', width=button_width, command=readTest,
+    helpButton = Button(root, text='Help', width=button_width, command=help_button_function,
                 height=button_height).pack()
-    aboutButton = Button(root, text='About', width=button_width, command=readTest,
+    aboutButton = Button(root, text='About', width=button_width, command=about,
                 height=button_height).pack()
     exitButton = Button(root, text='Exit', width=button_width, command=exit_program,
                 height=button_height).pack()
@@ -102,6 +112,32 @@ def insertDataManuallyFrame1(controller):
 
     mainloop()
 
+
+
+def aboutFrame():
+    root = Tk()
+    root.title(title)
+    def exit_about():
+        root.destroy()
+        pass
+
+    Label(root, text="Cos tu trzeba bedzie napisac...", width=label_width+30, height=label_height+30).pack()
+    exitButton = Button(root, text='Exit', width=button_width, command=exit_about,
+                height=button_height).pack()
+    mainloop()
+
+def help_frame():
+    root = Tk()
+    root.title(title)
+    def exit_help():
+        root.destroy()
+        pass
+
+
+    Label(root, text="To jest menu pomocy...", width=label_width+30, height=label_height+30).pack()
+    exitButton = Button(root, text='Exit', width=button_width, command=exit_help,
+                height=button_height).pack()
+    mainloop()
 
 def insertDataManuallyFrame2(controller):
     print("TODO!! TO JEST ZLE ZROBIONE!!!!!!!!!!!!!!!!!!!")
