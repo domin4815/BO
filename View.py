@@ -292,38 +292,38 @@ def readFromFileFrame(controller, filename="none"):
     mainloop()
 
 #jako arg lista [controler]
-def presentSolutionsFrame(list_of_solutions, controller):
-    print(list_of_solutions[0].launch_again)
+def presentSolutionsFrame(solution, controller):
+    #print(list_of_solutions[0].launch_again)
 
     root = Tk()
     root.title(title + " - results") #
-    r=0 #row
-    Label(root, text="Parameter", width=label_width, height=label_height).grid(row=r, column=0)
-    Label(root, text="Result", width=(label_width + len(list_of_solutions) + 15), height=label_height).grid(row=r, column=1)
-    Label(root, text="Given", width=label_width, height=label_height).grid(row=r, column=2)
+    r = 0 #row
+    Label(root, text="Parameter", fg="dark blue", font="Verdana 12 bold", width=label_width, height=label_height).grid(row=r, column=0)
+    Label(root, text="Best result", fg="dark blue", font="Verdana 12 bold", width=(label_width  + 15), height=label_height).grid(row=r, column=1)
     r += 1
 
-    for ctrl in list_of_solutions:
-        Label(root, text="Makespan ", width=label_width, height=label_height).grid(row=r, column=0)
-        Label(root, text=ctrl.minMakespan, width=label_width, height=label_height).grid(row=r, column=1)
-        Label(root, text="Not implemented", width=label_width, height=label_height).grid(row=r, column=2)
+    Label(root, text="Makespan ", width=label_width, height=label_height).grid(row=r, column=0)
+    Label(root, text=solution.minMakespan, width=label_width, height=label_height).grid(row=r, column=1)
 
-        r += 1
-        Label(root, text="Order ", width=label_width, height=label_height).grid(row=r, column=0)
-        Label(root, text=ctrl.order, width=label_width, height=label_height).grid(row=r, column=1)
-        Label(root, text="Not implemented", width=label_width, height=label_height).grid(row=r, column=2)
-        r += 1
+    r += 1
+    Label(root, text="Iteration", width=label_width, height=label_height).grid(row=r, column=0)
+    Label(root, text=solution.best_iteration, width=label_width, height=label_height).grid(row=r, column=1)
+    r += 1
 
-        Label(root, text="Algorithm time ", width=label_width, height=label_height).grid(row=r, column=0)
-        Label(root, text=ctrl.time, width=label_width, height=label_height).grid(row=r, column=1)
-        Label(root, text="none", width=label_width, height=label_height).grid(row=r, column=2)
-        r += 1
+    time = str(solution.time) + "s"
+    Label(root, text="Execution time", width=label_width, height=label_height).grid(row=r, column=0)
+    Label(root, text=time, width=label_width, height=label_height).grid(row=r, column=1)
+    r += 1
 
-        Label(root, text="With NEH ", width=label_width, height=label_height).grid(row=r, column=0)
-        Label(root, text=ctrl.isNehEnabled, width=label_width, height=label_height).grid(row=r, column=1)
-        Label(root, text="none", width=label_width, height=label_height).grid(row=r, column=2)
-        r += 1
-        #dolozyc jeszcze pare statystyk plus wizualizacje
+    Label(root, text= "NEH", width=label_width, height=label_height).grid(row=r, column=0)
+    Label(root, text=solution.isNehEnabled, width=label_width, height=label_height).grid(row=r, column=1)
+    #dolozyc jeszcze pare statystyk plus wizualizacje
+
+    r += 1
+    Label(root, text= "Order", width=label_width, height=label_height).grid(row=r, column=0)
+    Label(root, text=solution.order, wraplength=label_width*label_width).grid(row=r, column=1)
+
+    r += 1
 
 
     def exit_button():
@@ -340,19 +340,15 @@ def presentSolutionsFrame(list_of_solutions, controller):
         print("Not implemented...")
         pass
     def showPlots():
-        for ctrl in list_of_solutions:
-            plt.plot(ctrl.makespanTable)
-            plt.show()
-            #dodac tytul
+        plt.plot(solution.makespanTable)
+        plt.show()
+        #dodac tytul
         pass
 
-
-    againBack = Button(root, text='Again', width=button_width, command=again_button,
-                    height=button_height).grid(row=r, column=0)
     buttonShowPlots = Button(root, text='Show Plots', width=button_width, command=showPlots,
-                    height=button_height).grid(row=r, column=1)
-    button = Button(root, text='Exit', width=button_width, command=exit_button,
-                    height=button_height).grid(row=r, column=2)
+                    height=button_height).grid(row=r, column=0)
+    againBack = Button(root, text='Exit', width=button_width, command=again_button,
+                height=button_height).grid(row=r, column=1)
     r +=1
 
     mainloop()

@@ -208,8 +208,8 @@ def startFromGUI(controller):
         )
 
     dat2 = datetime.datetime.now()
-    print(dat2-dat1)
+    execution_time = (dat2-dat1).total_seconds()
     print(r[0], r[1])
     #print(r)
 
-    return r, dat2
+    return r, execution_time

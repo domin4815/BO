@@ -27,6 +27,7 @@ class ProgramController(object):
         self.time = None
         self.order = []
         self.minMakespan = None
+        self.best_iteration = 0
 
     def print_parameters(self):
         print(self.iterations, self.step_len, self.cockroaches_num,
@@ -78,12 +79,17 @@ def parseFileAndRun(controller):
             solutionKeeperControler.makespanTable = r[0][2]
             solutionKeeperControler.time = r[1]
             solutionKeeperControler.order = r[0][1]
+            solutionKeeperControler.best_iteration = \
+                solutionKeeperControler.makespanTable.index(solutionKeeperControler.minMakespan)
+
             solutionsTable.append(solutionKeeperControler)
 
     except IndexError:
         pass
-    View.presentSolutionsFrame(solutionsTable, controller)
-    pass
+    for i in xrange(len(solutionsTable)):
+        View.presentSolutionsFrame(solutionsTable[i], controller)
+        pass
+
 
 if __name__ == '__main__':
     controller = ProgramController(100,4,30,20,5,[])
@@ -110,9 +116,14 @@ if __name__ == '__main__':
                 solutionKeeperControler.makespanTable = r[0][2]
                 solutionKeeperControler.time = r[1]
                 solutionKeeperControler.order = r[0][1]
+                solutionKeeperControler.best_iteration = \
+                    solutionKeeperControler.makespanTable.index(solutionKeeperControler.minMakespan)
+
                 solutionsTable = []
                 solutionsTable.append(solutionKeeperControler)
-                View.presentSolutionsFrame(solutionsTable, controller)
+                for i in xrange(len(solutionsTable)):
+                    View.presentSolutionsFrame(solutionsTable[i], controller)
+
 
 
 
