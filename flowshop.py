@@ -1,4 +1,5 @@
-from random import shuffle, randint
+from random import shuffle, randint, uniform
+from math import exp
 import pprint
 import datetime
 import neh
@@ -6,6 +7,7 @@ import Controller
 import matplotlib.pyplot as plt
 import numpy
 import time
+import distance
 
 def calculate_cost(jobs, state):
     cost = [[] for i in xrange(len(jobs))]
@@ -28,19 +30,27 @@ def step(a, b):
             return
 
 
-def swarm(jobs, states, steps, optimal_cost, optimal_state):
+def swarm(jobs, states, steps, optimal_cost, optimal_state, visual):
     change = False
     for i, state_i in enumerate(states):
+        optimal_state_local = state_i[:]
+        optimal_cost_local = calculate_cost(jobs, state_i)
         for j, state_j in enumerate(states):
-            cost_i = calculate_cost(jobs, state_i)
-            cost_j = calculate_cost(jobs, state_j)
-            if cost_j < cost_i:
-                for s in xrange(randint(0, steps)):
-                    step(state_i, state_j)
-                    cost = calculate_cost(jobs, state_i)
-                    if cost < optimal_cost:
-                        optimal_cost, optimal_state = cost, state_i[:]
-                        change = True
+            if distance.hamming(state_i, state_j) <= visual:
+                cost_i = calculate_cost(jobs, state_i)
+                cost_j = calculate_cost(jobs, state_j)
+                if cost_j < cost_i:
+                    for s in xrange(randint(0, steps)):
+                        step(state_i, state_j)
+                        cost = calculate_cost(jobs, state_i)
+                        if cost < optimal_cost_local:
+                            optimal_cost_local, optimal_state_local = cost, state_i[:]
+            if state_i == optimal_state_local:
+                step(state_i, optimal_state)
+                cost = calculate_cost(jobs, state_i)
+                if cost < optimal_cost:
+                    optimal_cost, optimal_state = cost, state_i[:]
+                    change = True
     return optimal_cost, change
 
 
@@ -49,12 +59,11 @@ def disperse(states, jobs, optimal_cost, optimal_state):
     for i, state in enumerate(states):
         rand = range(len(jobs))
         shuffle(rand)
-        for s in xrange(randint(1, 2)):
-            step(state, rand)
-            cost = calculate_cost(jobs, state)
-            if cost < optimal_cost:
-                optimal_cost, optimal_state = cost, state[:]
-                change = True
+        step(state, rand)
+        cost = calculate_cost(jobs, state)
+        if cost < optimal_cost:
+            optimal_cost, optimal_state = cost, state[:]
+            change = True
     return optimal_cost, change
 
 
@@ -63,13 +72,17 @@ def ruthless(states, optimal_state):
     states[index] = optimal_state[:]
 
 
+def acceptance(cost, optimal_cost, iteration):
+    return 1.0 if cost < optimal_cost else exp((optimal_cost - cost) / iteration)
+
+
 def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobTimes, isNehEnabled, showDynamicallyGraph, controller):
     jobs = {}
     states = []
     optimal_state = []
     optimal_cost = 999999999999999999
     optimals = []
-
+    visual = 10
 
     # print('Times:')
     if jobTimes is None:
@@ -127,6 +140,8 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
         plt.plot([0, controller.iterations], [controller.lowerbound, controller.lowerbound], 'g')
         plt.xlim([0, controller.iterations])
 
+    threshold = iterations / randint(2, 10)
+
     for i in xrange(iterations):
         yData.append(optimal_cost)
         xData.append(i)
@@ -140,52 +155,31 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
 
         print optimal_cost
         makespan_table.append(optimal_cost)
-        optimal_cost, change_s = swarm(jobs, states, steps, optimal_cost, optimal_state)
+        optimal_cost, change_s = swarm(jobs, states, steps, optimal_cost, optimal_state, visual)
         optimal_cost, change_d = disperse(states, jobs, optimal_cost, optimal_state)
 
         if not change_s and not change_d:
             counter += 1
-            if counter > 50:
-                optimals.append((optimal_cost, optimal_state[:]))
+            if counter > threshold:
                 a = randint(0, len(optimal_state) - 1)
                 b = randint(0, len(optimal_state) - 1)
-                optimal_state[a], optimal_state[b] = optimal_state[b], optimal_state[a]
-                optimal_cost = calculate_cost(jobs, optimal_state)
-                counter = 0
+                new_state = optimal_state[:]
+                new_state[a], new_state[b] = new_state[b], new_state[a]
+                new_cost = calculate_cost(jobs, new_state)
+                if acceptance(new_cost, optimal_cost, i) > uniform(0, 1):
+                    optimals.append((optimal_cost, optimal_state[:]))
+                    optimal_state, optimal_cost = new_state[:], new_cost
+                    counter = 0
         else:
             counter = 0
 
         ruthless(states, optimal_state)
+
     for i in optimals:
         if i[0] < optimal_cost:
             optimal_cost, optimal_state = i
     return (optimal_cost, optimal_state, makespan_table)
 
-
-def run_cockroaches(iterations, steps, cockroach_count, job_count,
-    machine_count, job_times):
-    job_times = neh.neh(job_times)
-    r = cockroach(iterations, steps, cockroach_count, job_count, machine_count,
-        job_times, True, False)
-    print(r[0], r[1])
-
-
-if __name__ == '__main__':
-    print("Insert data")
-    iterations = input()#'Iterations: ')
-    steps = input()#'Step length: ')
-    cockroach_count = input()#'Number of cockroaches: ')
-    job_count = input()#'Number of jobs: ')
-    machine_count = input()#'Number of machines: ')
-    dat1 = datetime.datetime.now()
-    r = cockroach(
-        iterations, steps, cockroach_count, job_count, machine_count,
-        None, True, False
-    )
-    dat2 = datetime.datetime.now()
-    print(dat2-dat1)
-
-    print(r[0], r[1])
 
 def startFromGUI(controller):
     dat1 = datetime.datetime.now()
@@ -213,3 +207,30 @@ def startFromGUI(controller):
     #print(r)
 
     return r, execution_time
+
+
+
+def run_cockroaches(iterations, steps, cockroach_count, job_count,
+    machine_count, job_times):
+    job_times = neh.neh(job_times)
+    r = cockroach(iterations, steps, cockroach_count, job_count, machine_count,
+        job_times, True, False)
+    print(r[0], r[1])
+
+
+if __name__ == '__main__':
+    print("Insert data")
+    iterations = input()#'Iterations: ')
+    steps = input()#'Step length: ')
+    cockroach_count = input()#'Number of cockroaches: ')
+    job_count = input()#'Number of jobs: ')
+    machine_count = input()#'Number of machines: ')
+    dat1 = datetime.datetime.now()
+    r = cockroach(
+        iterations, steps, cockroach_count, job_count, machine_count,
+        None, True, False
+    )
+    dat2 = datetime.datetime.now()
+    print(dat2-dat1)
+
+    print(r[0], r[1])
