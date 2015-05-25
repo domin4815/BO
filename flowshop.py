@@ -59,11 +59,12 @@ def disperse(states, jobs, optimal_cost, optimal_state):
     for i, state in enumerate(states):
         rand = range(len(jobs))
         shuffle(rand)
-        step(state, rand)
-        cost = calculate_cost(jobs, state)
-        if cost < optimal_cost:
-            optimal_cost, optimal_state = cost, state[:]
-            change = True
+        for j in xrange(randint(1, 2)):
+            step(state, rand)
+            cost = calculate_cost(jobs, state)
+            if cost < optimal_cost:
+                optimal_cost, optimal_state = cost, state[:]
+                change = True
     return optimal_cost, change
 
 
@@ -82,7 +83,7 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
     optimal_state = []
     optimal_cost = 999999999999999999
     optimals = []
-    visual = 10
+    visual = 15
 
     # print('Times:')
     if jobTimes is None:
@@ -168,6 +169,10 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
                 new_cost = calculate_cost(jobs, new_state)
                 if acceptance(new_cost, optimal_cost, i) > uniform(0, 1):
                     optimals.append((optimal_cost, optimal_state[:]))
+                    for s in states:
+                        if s == optimal_state:
+                            s = new_state[:]
+                            break
                     optimal_state, optimal_cost = new_state[:], new_cost
                     counter = 0
         else:
