@@ -141,7 +141,7 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
         plt.plot([0, controller.iterations], [controller.lowerbound, controller.lowerbound], 'g')
         plt.xlim([0, controller.iterations])
 
-    threshold = iterations / randint(2, 10)
+    threshold = iterations / randint(4, 10)
 
     for i in xrange(iterations):
         yData.append(optimal_cost)
@@ -162,19 +162,20 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
         if not change_s and not change_d:
             counter += 1
             if counter > threshold:
-                a = randint(0, len(optimal_state) - 1)
-                b = randint(0, len(optimal_state) - 1)
-                new_state = optimal_state[:]
-                new_state[a], new_state[b] = new_state[b], new_state[a]
-                new_cost = calculate_cost(jobs, new_state)
+                rand = range(len(jobs))
+                shuffle(rand)
+                new_cost = calculate_cost(jobs, rand)
                 if acceptance(new_cost, optimal_cost, i) > uniform(0, 1):
                     optimals.append((optimal_cost, optimal_state[:]))
                     for s in states:
                         if s == optimal_state:
-                            s = new_state[:]
+                            for j in xrange(randint(1, 2)):
+                                step(s, rand)
+                            new_cost = calculate_cost(jobs, s)
+                            optimal_state, optimal_cost = s[:], new_cost
+                            counter = 0
                             break
-                    optimal_state, optimal_cost = new_state[:], new_cost
-                    counter = 0
+
         else:
             counter = 0
 
