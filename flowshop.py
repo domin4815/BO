@@ -83,7 +83,8 @@ def cockroach(iterations, steps, cockroach_count, job_count, machine_count, jobT
     optimal_state = []
     optimal_cost = 999999999999999999
     optimals = []
-    visual = 15
+    visual = controller.visual
+    print("VISUAL: ", visual)
 
     # print('Times:')
     if jobTimes is None:

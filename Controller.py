@@ -16,9 +16,10 @@ class ProgramController(object):
         self.jobs = jobsTab
         self.file = None
         self.isNehEnabled = False
+        self.visual = 15
         #other parameters
         self.showDinamicallyGraph = None
-        self.upperbound = 99999
+        self.upperbound = 0
         self.lowerbound = 0
         self.launch_again = True
         self.exit_now = False

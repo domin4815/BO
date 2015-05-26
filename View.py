@@ -77,7 +77,7 @@ def inputChooserFrame(controller):
 def insertDataManuallyFrame1(controller):
     strings = [
         'Iterations', 'Step len', 'Number of cockroaches',
-        'Number of jobs', 'Number of machines'
+        'Number of jobs', 'Number of machines', 'Visual'
     ]
     inputs = []
     root = Tk()
@@ -117,6 +117,7 @@ def insertDataManuallyFrame1(controller):
             controller.cockroaches_num = int(inputs[2].get())
             controller.jobs_num = int(inputs[3].get())
             controller.machines_num = int(inputs[4].get())
+            controller.visual= int(inputs[5].get())
         except ValueError:
             pass
         root.destroy()
@@ -251,6 +252,12 @@ def readFromFileFrame(controller, filename="none"):
     inputs.append(T3)
     T3.grid(row=r, column=1)
     r += 1
+    Label(root, text='Visual', width=label_width, height=label_height).grid(row=r, column=0)
+    T4 = Entry(root)
+    T4.insert(0, controller.step_len)
+    inputs.append(T4)
+    T4.grid(row=r, column=1)
+    r += 1
 
     def next_button():
         try:
@@ -264,6 +271,10 @@ def readFromFileFrame(controller, filename="none"):
             pass
         try:
             controller.cockroaches_num = int(inputs[2].get())
+        except ValueError:
+            pass
+        try:
+            controller.visual = int(inputs[3].get())
         except ValueError:
             pass
         root.destroy()
@@ -341,6 +352,8 @@ def presentSolutionsFrame(solution, controller):
         pass
     def showPlots():
         plt.plot(solution.makespanTable)
+        plt.plot([0, controller.iterations], [controller.upperbound, controller.upperbound], 'r')
+        plt.plot([0, controller.iterations], [controller.lowerbound, controller.lowerbound], 'g')
         plt.show()
         #dodac tytul
         pass
