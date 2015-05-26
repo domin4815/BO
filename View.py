@@ -42,7 +42,7 @@ def inputChooserFrame(controller):
 
     def readTest():
         root.destroy()
-        readFromFileFrame(controller, filename="tai20_5short.txt")
+        readFromFileFrame(controller, filename="tai50_20short.txt")
 
     def exit_program():
         root.destroy()
@@ -62,7 +62,7 @@ def inputChooserFrame(controller):
     insertDataManuallyButton = Button(root, text='Insert data manually', width=button_width,
                 command=insertDataMAnuallyButton,
                 height=button_height).pack()
-    readFileTestButton = Button(root, text='tai20_5short.txt', width=button_width, command=readTest, bg="red",
+    readFileTestButton = Button(root, text='tai50_20short.txt', width=button_width, command=readTest, bg="red",
                 height=button_height).pack()
     helpButton = Button(root, text='Help', width=button_width, command=help_button_function,
                 height=button_height).pack()
