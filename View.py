@@ -1,7 +1,6 @@
 #  -*- coding: latin-1 -*-
 import matplotlib.pyplot as plt
-
-__author__ = 'domin4815'
+from random import shuffle, randint, uniform
 from Tkinter import *
 import flowshop
 from tkFileDialog import askopenfilename
@@ -92,13 +91,21 @@ def insertDataManuallyFrame1(controller):
     Label(root, text="Show graph dynamically", width=label_width, height=label_height).grid(row=r, column=0)
     Checkbutton(root, text="Graph", variable=graphCheckboxInt).grid(row=r, column=1)
     r +=1
-
     for c in strings:
         Label(root, text=c, width=label_width, height=label_height).grid(row=r, column=0)
         T = Entry(root)
         inputs.append(T)
         T.grid(row=r, column=1)
         r = r + 1
+    inputs[0].insert(0, "1000")
+    inputs[1].insert(0, "4")
+    inputs[2].insert(0, "25")
+    inputs[3].insert(0, "10")
+    inputs[4].insert(0, "8")
+    inputs[5].insert(0, "10")
+
+
+
 
     def next_button():
         if nehCheckboxInt.get() == 0:
@@ -179,7 +186,7 @@ def insertDataManuallyFrame2(controller):
             T = Entry(root)
             T.config(width=4)
             T.grid(row=r, column=m + 2)
-            #T.insert(0, str(i + 7))
+            T.insert(0, str(randint(1,1000)))
             entryTab.append(T)
         inputs.append(entryTab)
         r = r + 1
@@ -192,18 +199,18 @@ def insertDataManuallyFrame2(controller):
                     inputsStr.append(inputs[i][i2].get())
 
                 inputsInt = []
-                for ia in xrange(len(inputsStr)):
+                for ia in range(len(inputsStr)):
                     inputsInt.append(int(inputsStr[ia]))
                 controller.jobs += [inputsInt]
         except ValueError:
-            print(controller.jobs)
+            print("VALUE ERROR",controller.jobs)
         root.destroy()
-        flowshop.run_cockroaches(
-            controller.iterations, controller.step_len,
-            controller.cockroaches_num, controller.jobs_num,
-            controller.machines_num,
-            controller.jobs
-        )
+        # flowshop.run_cockroaches(
+        #     controller.iterations, controller.step_len,
+        #     controller.cockroaches_num, controller.jobs_num,
+        #     controller.machines_num,
+        #     controller.jobs
+        # )
 
     def back_button():
         root.destroy()
@@ -291,9 +298,9 @@ def readFromFileFrame(controller, filename="none"):
         pass
 
     def back_button():
-        print("Not implemented...")
+        root.destroy()
+        inputChooserFrame(controller)
         pass
-
 
     buttonBack = Button(root, text='Back', width=button_width, command=back_button,
                     height=button_height).grid(row=r, column=0)
