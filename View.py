@@ -8,16 +8,13 @@ from tkFileDialog import askopenfilename
 input_width = 26
 input_height = 2
 
-button_width = 20
+button_width = 15
 button_height = 2
 
 label_height = 2
 label_width = 23
 
-title = "BO"
-
-
-
+title = "Cockroach Swarm Optimization in flow-shop job scheduling"
 
 
 def inputChooserFrame(controller):
@@ -52,8 +49,8 @@ def inputChooserFrame(controller):
         aboutFrame()
         pass
 
-    Label(root, text='\nFlow shop problem... \n'
-                     '... by cockroach algorithm.\n', width=label_width, height=label_height+2).pack()
+    Label(root, text='\n Cockroach Swarm Optimization \n'
+                     'in flow-shop job scheduling\n', width=label_width, height=label_height+2).pack()
 
     readFileButton = Button(root, text='Read from file', width=button_width,
                     command=readFromFileButton,
@@ -146,29 +143,53 @@ def insertDataManuallyFrame1(controller):
     mainloop()
 
 
-
 def aboutFrame():
     root = Tk()
     root.title(title)
+    root.config(bg = 'grey70')
     def exit_about():
         root.destroy()
         pass
+    label = Label(root, text="Cockroach Swarm Optimization algorithm in flow-shop job scheduling. \n"
+                             "\n"
+                             "Flow shop scheduling problems, are a class of scheduling problems with\n"
+                             "a workshop or group shop in which the flow control shall enable an appropriate sequencing\n"
+                             "for each job and for processing on a set of machines or with other\n"
+                             "resources 1,2,...,m in compliance with given processing orders. Especially the maintaining\n"
+                             "of a continuous flow of processing tasks is desired with a minimum\n"
+                             "of idle time and a minimum of waiting time. Flow shop scheduling is a special\n"
+                             "case of job shop scheduling where there is strict order of all operations\n"
+                             " to be performed on all jobs. Flow shop scheduling may apply\n"
+                             "as well to production facilities as to computing designs.\n"
+                             "\n"
+                             "Program uses Cockroach Swarm Optimization to solve flow-shop problem\n"
+                             "\n"
+                             "Authors:\n"
+                             "Dominik Przepiora\n"
+                             "Rafal Rozak\n"
+                             "Grzegorz Kosowicz\n"
+                             "", width=label_width+50, height=label_height+15, bg='grey70')
 
-    Label(root, text="Cos tu trzeba bedzie napisac...", width=label_width+30, height=label_height+30).pack()
-    exitButton = Button(root, text='Exit', width=button_width, command=exit_about,
+
+    label.pack()
+    exitButton = Button(root, text='Exit', width=button_width, command=exit_about, bg = 'grey60',
                 height=button_height).pack()
     mainloop()
 
 def help_frame():
     root = Tk()
     root.title(title)
+    root.config(bg = 'grey70')
+
     def exit_help():
         root.destroy()
         pass
 
-
-    Label(root, text="To jest menu pomocy...", width=label_width+30, height=label_height+30).pack()
-    exitButton = Button(root, text='Exit', width=button_width, command=exit_help,
+    label = Label(root, text="Project documentation address: \n"
+                             "https://docs.google.com/document/d/1Ry-Kql4B4GaYOmJUT56LgnelMhuLrx5RKo0iYm1-na4/edit# \n"
+                             "", width=label_width+100, height=label_height+5, bg='grey70')
+    label.pack()
+    exitButton = Button(root, text='Exit', width=button_width, command=exit_help, bg = 'grey60',
                 height=button_height).pack()
     mainloop()
 
@@ -311,10 +332,141 @@ def readFromFileFrame(controller, filename="none"):
 
 #jako arg lista [controler]
 def presentSolutionsFrame(solution, controller):
-    #print(list_of_solutions[0].launch_again)
 
+    mainloop()
+
+
+def allInOneFrame(controller, solution = None):
     root = Tk()
-    root.title(title + " - results") #
+    root.title(title)
+    img = PhotoImage(file='a.gif')
+    root.tk.call('wm', 'iconphoto', root._w, img)
+
+    input_choose_frame = Frame(width=1200, height=50, background="gray40")
+####################################
+    def readFromFileButton():
+        readFileButton.config(state = "disable")
+        readFromFileFrame(controller)
+        pass
+
+    def help_button_function():
+        help_frame()
+        pass
+
+    def insertDataMAnuallyButton():
+        insertDataManuallyButton.config(state = "disable")
+        insertDataManuallyFrame1(controller)
+        pass
+
+    def readTest():
+        readFileTestButton.config(state = "disable")
+
+        root.destroy()
+        readFromFileFrame(controller, filename="tai50_20short.txt")
+
+    def exit_program():
+        root.destroy()
+        controller.exit_now = True
+        pass
+
+    def about():
+        aboutFrame()
+        pass
+
+    readFileButton = Button(input_choose_frame, bg = 'grey70', text='Read from file', width=button_width,
+                    command=readFromFileButton,
+                    height=button_height).pack(side = LEFT)
+    insertDataManuallyButton = Button(input_choose_frame, text='Insert data manually', width=button_width,
+                command=insertDataMAnuallyButton, bg = 'grey70',
+                height=button_height).pack(side = LEFT)
+    readFileTestButton = Button(input_choose_frame, text='tai50_20short.txt', width=button_width, command=readTest,
+                height=button_height, bg = 'grey70')
+    readFileTestButton.pack(side = LEFT)
+
+    helpButton = Button(input_choose_frame, text='Help', width=button_width, command=help_button_function,
+                height=button_height, bg = 'grey70').pack(side = LEFT)
+    aboutButton = Button(input_choose_frame, bg = 'grey70', text='About', width=button_width, command=about,
+                height=button_height).pack(side = LEFT)
+    exitButton = Button(input_choose_frame, bg = 'grey70', text='Exit', width=button_width, command=exit_program,
+                height=button_height).pack(side = LEFT)
+    input_choose_frame.pack(side = TOP, fill = X)
+
+####################################
+    parameters_frame = Frame(width=200, height=500, background="gray60")
+
+    strings = [
+        'Iterations', 'Step len', 'Number of cockroaches',
+        'Number of jobs', 'Number of machines', 'Visual'
+    ]
+    inputs = []
+
+
+    r = 0
+    nehCheckboxInt = IntVar()
+    graphCheckboxInt = IntVar()
+    Label(parameters_frame, text="Run NEH before start", width=label_width, height=label_height, bg = 'grey60').grid(row=r, column=0)
+    Checkbutton(parameters_frame, text=" NEH ", variable=nehCheckboxInt, bg = 'grey60').grid(row=r, column=1)
+    r+=1
+    Label(parameters_frame, text="Show graph dynamically  ", width=label_width, height=label_height, bg = 'grey60').grid(row=r, column=0)
+    Checkbutton(parameters_frame, text="Graph", variable=graphCheckboxInt, bg = 'grey60').grid(row=r, column=1)
+    r +=1
+    for c in strings:
+        Label(parameters_frame, text=c, width=label_width, height=label_height, bg = 'grey60').grid(row=r, column=0)
+        T = Entry(parameters_frame, bg = 'grey60')
+        inputs.append(T)
+        T.grid(row=r, column=1)
+        r = r + 1
+    inputs[0].insert(0, "1000")
+    inputs[1].insert(0, "4")
+    inputs[2].insert(0, "25")
+    inputs[3].insert(0, "10")
+    inputs[4].insert(0, "8")
+    inputs[5].insert(0, "10")
+
+
+
+
+    def next_button():
+        if nehCheckboxInt.get() == 0:
+            controller.isNehEnabled = False
+        else:
+            controller.isNehEnabled = True
+
+        if graphCheckboxInt.get() == 0:
+            controller.showDinamicallyGraph = False
+        else:
+            controller.showDinamicallyGraph = True
+
+        try:
+            controller.iterations = int(inputs[0].get())
+            controller.step_len = int(inputs[1].get())
+            controller.cockroaches_num = int(inputs[2].get())
+            controller.jobs_num = int(inputs[3].get())
+            controller.machines_num = int(inputs[4].get())
+            controller.visual= int(inputs[5].get())
+        except ValueError:
+            pass
+        root.destroy()
+        insertDataManuallyFrame2(controller)
+
+    def back_button():
+        root.destroy()
+        inputChooserFrame(controller)
+        pass
+
+    # button2 = Button(
+    #     parameters_frame, text='< Back',
+    #     width=button_width, command=back_button, height=button_height, bg = 'grey70').grid(row=r, column=0)
+    #
+    # button = Button(parameters_frame, text='Next >', width=button_width, command=next_button,
+    #                 height=button_height, bg = 'grey70').grid(row=r, column=1)
+    parameters_frame.pack(side = LEFT)
+
+####################################
+    solutions_frame = Frame(width=200, height= 289, background="gray60")
+
+#print(list_of_solutions[0].launch_again)
+
     r = 0 #row
     Label(root, text="Parameter", fg="dark blue", font="Verdana 12 bold", width=label_width, height=label_height).grid(row=r, column=0)
     Label(root, text="Best result", fg="dark blue", font="Verdana 12 bold", width=(label_width  + 15), height=label_height).grid(row=r, column=1)
@@ -334,7 +486,10 @@ def presentSolutionsFrame(solution, controller):
     r += 1
 
     Label(root, text= "NEH", width=label_width, height=label_height).grid(row=r, column=0)
-    Label(root, text=solution.isNehEnabled, width=label_width, height=label_height).grid(row=r, column=1)
+    nehEnable = "Disable"
+    if solution.isNehEnabled:
+        nehEnable = "Enable"
+    Label(root, text=nehEnable, width=label_width, height=label_height).grid(row=r, column=1)
     #dolozyc jeszcze pare statystyk plus wizualizacje
 
     r += 1
@@ -371,4 +526,14 @@ def presentSolutionsFrame(solution, controller):
                 height=button_height).grid(row=r, column=1)
     r +=1
 
-    mainloop()
+
+
+    solutions_frame.pack(side = LEFT)
+
+
+####################################
+    #other_frame = Frame(width=200, height=500, background="gray50")
+
+   # other_frame.pack(side = LEFT)
+
+    root.mainloop()

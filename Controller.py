@@ -94,36 +94,37 @@ def parseFileAndRun(controller):
 
 if __name__ == '__main__':
     controller = ProgramController(100,4,30,20,5,[])
-    while(controller.launch_again):
-        controller.launch_again = False
-        View.inputChooserFrame(controller)
-        if not controller.exit_now: #gdy ktos nie wprowadzil danych
-            if(controller.file != None):
-                parseFileAndRun(controller)
-            else:
-                print("flowshop startuje z parametrami:")
-                print("iteracje: ", controller.iterations)
-                print("step: ", controller.step_len)
-                print("karaluchy: ", controller.cockroaches_num)
-                r = flowshop.startFromGUI(controller)
-                controller.makespanTable = r[0][2]
-                controller.time = r[1]
-                controller.order = r[0][1]
-                solutionKeeperControler = ProgramController(controller.iterations,controller.step_len,
-                                                        controller.cockroaches_num,controller.jobs_num,
-                                                        controller.machines_num,controller.jobs)
-                solutionKeeperControler.isNehEnabled = controller.isNehEnabled
-                solutionKeeperControler.minMakespan = r[0][0]
-                solutionKeeperControler.makespanTable = r[0][2]
-                solutionKeeperControler.time = r[1]
-                solutionKeeperControler.order = r[0][1]
-                solutionKeeperControler.best_iteration = \
-                    solutionKeeperControler.makespanTable.index(solutionKeeperControler.minMakespan)
-
-                solutionsTable = []
-                solutionsTable.append(solutionKeeperControler)
-                for i in xrange(len(solutionsTable)):
-                    View.presentSolutionsFrame(solutionsTable[i], controller)
+    View.allInOneFrame(controller)
+    # while(controller.launch_again):
+    #     controller.launch_again = False
+    #     View.inputChooserFrame(controller)
+    #     if not controller.exit_now: #gdy ktos nie wprowadzil danych
+    #         if(controller.file != None):
+    #             parseFileAndRun(controller)
+    #         else:
+    #             print("flowshop startuje z parametrami:")
+    #             print("iteracje: ", controller.iterations)
+    #             print("step: ", controller.step_len)
+    #             print("karaluchy: ", controller.cockroaches_num)
+    #             r = flowshop.startFromGUI(controller)
+    #             controller.makespanTable = r[0][2]
+    #             controller.time = r[1]
+    #             controller.order = r[0][1]
+    #             solutionKeeperControler = ProgramController(controller.iterations,controller.step_len,
+    #                                                     controller.cockroaches_num,controller.jobs_num,
+    #                                                     controller.machines_num,controller.jobs)
+    #             solutionKeeperControler.isNehEnabled = controller.isNehEnabled
+    #             solutionKeeperControler.minMakespan = r[0][0]
+    #             solutionKeeperControler.makespanTable = r[0][2]
+    #             solutionKeeperControler.time = r[1]
+    #             solutionKeeperControler.order = r[0][1]
+    #             solutionKeeperControler.best_iteration = \
+    #                 solutionKeeperControler.makespanTable.index(solutionKeeperControler.minMakespan)
+    #
+    #             solutionsTable = []
+    #             solutionsTable.append(solutionKeeperControler)
+    #             for i in xrange(len(solutionsTable)):
+    #                 View.presentSolutionsFrame(solutionsTable[i], controller)
 
 
 
