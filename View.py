@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from random import shuffle, randint, uniform
 from Tkinter import *
 import flowshop
+from Controller import *
+
 from tkFileDialog import askopenfilename
 # CONFIG
 input_width = 26
@@ -355,7 +357,6 @@ def allInOneFrame(controller, solution = None):
         pass
 
     def insertDataMAnuallyButton():
-        insertDataManuallyButton.config(state = "disable")
         insertDataManuallyFrame1(controller)
         pass
 
@@ -378,9 +379,9 @@ def allInOneFrame(controller, solution = None):
                     command=readFromFileButton,
                     height=button_height)
     readFileButton.pack(side = LEFT)
-    insertDataManuallyButton = Button(input_choose_frame, text='Insert data manually', width=button_width,
-                command=insertDataMAnuallyButton, bg = 'grey70',
-                height=button_height).pack(side = LEFT)
+    # insertDataManuallyButton = Button(input_choose_frame, text='Insert data manually', width=button_width,
+    #             command=insertDataMAnuallyButton, bg = 'grey70',
+    #             height=button_height).pack(side = LEFT)
     readFileTestButton = Button(input_choose_frame, text='tai50_20short.txt', width=button_width, command=readTest,
                 height=button_height, bg = 'grey70')
     readFileTestButton.pack(side = LEFT)
@@ -394,6 +395,8 @@ def allInOneFrame(controller, solution = None):
     input_choose_frame.pack(side = TOP, fill = X)
 
 ####################################
+    lab_to_refresh = []
+
     parameters_frame = Frame(width=200, height=500)
 
     strings = [
@@ -441,6 +444,9 @@ def allInOneFrame(controller, solution = None):
             a.grid_forget()
         for a in buttonsToForget:
             a.grid_forget()
+        for a in lab_to_refresh:
+            a.grid_forget()
+
 
         if nehCheckboxInt.get() == 0:
             controller.isNehEnabled = False
@@ -496,7 +502,7 @@ def allInOneFrame(controller, solution = None):
         r = 0
 
         for i in xrange(0, controller.jobs_num):
-            lab = Label(input_frame, text='Job #{0} time'.format(str(i + 1)), width=label_width,
+            lab = Label(input_frame, text='Job #{0} time'.format(str(i)), width=label_width,
                   height=label_height)
             lab.grid(row=r, column=0)
             labelsToHide.append(lab)
@@ -523,13 +529,27 @@ def allInOneFrame(controller, solution = None):
                     controller.jobs += [inputsInt]
             except ValueError:
                 print("VALUE ERROR",controller.jobs)
-           # root.destroy()
-            # flowshp.run_cockroaches(
-            #     controller.iterations, controller.step_len,
-            #     controller.cockroaches_num, controller.jobs_num,
-            #     controller.machines_num,
-            #     controller.jobs
-            # )
+
+            print("flowshop startuje z parametrami:")
+            print("iteracje: ", controller.iterations)
+            print("step: ", controller.step_len)
+            print("karaluchy: ", controller.cockroaches_num)
+            r = flowshop.startFromGUI(controller)
+            controller.makespanTable = r[0][2]
+            controller.time = r[1]
+            controller.order = r[0][1]
+
+            controller.minMakespan = r[0][0]
+            controller.makespanTable = r[0][2]
+            controller.best_iteration = \
+                controller.makespanTable.index(controller.minMakespan)
+
+            solutionsTable = []
+            solutionsTable.append(controller)
+            for i in xrange(len(solutionsTable)):
+                print("Zrobilo sie\n")
+                make_solutions_visible()
+
 
         #def back_button():
             #button.grid(row=r, column=1)
@@ -539,85 +559,114 @@ def allInOneFrame(controller, solution = None):
 
         buttonGo = Button(input_frame, text='Go', width=button_width, command=go_button,
                         height=button_height)
-        buttonGo.grid(row=r, column=1)
+        buttonGo.grid(row=r, column=0)
         # button.grid_forget()
-        buttonBack = Button(input_frame, text='Back', width=button_width, command=back_button,
-                         height=button_height)
-        buttonBack.grid(row=r, column=0)
+        # buttonBack = Button(input_frame, text='Back', width=button_width, command=back_button,
+        #                  height=button_height)
+        # buttonBack.grid(row=r, column=0)
         buttonsToForget.append(buttonGo)
-        buttonsToForget.append(buttonBack)
+        # buttonsToForget.append(buttonBack)
 
     input_frame.pack(side = LEFT)
 
 ####################################
-#     solutions_frame = Frame(width=200, height= 289)
-#
-# #print(list_of_solutions[0].launch_again)
-#
-#     r = 0 #row
-#     Label(solutions_frame, text="Parameter", fg="dark blue", font="Verdana 12 bold", width=label_width, height=label_height).grid(row=r, column=0)
-#     Label(solutions_frame, text="Best result", fg="dark blue", font="Verdana 12 bold", width=(label_width  + 15), height=label_height).grid(row=r, column=1)
-#     r += 1
-#
-#     Label(solutions_frame, text="Makespan ", width=label_width, height=label_height).grid(row=r, column=0)
-# #    Label(solutions_frame, text=solution.minMakespan, width=label_width, height=label_height).grid(row=r, column=1)
-#
-#     r += 1
-#     Label(solutions_frame, text="Iteration", width=label_width, height=label_height).grid(row=r, column=0)
-#     #Label(solutions_frame, text=solution.best_iteration, width=label_width, height=label_height).grid(row=r, column=1)
-#     r += 1
-#
-#     time = str(solution.time) + "s"
-#     Label(solutions_frame, text="Execution time", width=label_width, height=label_height).grid(row=r, column=0)
-#    # Label(solutions_frame, text=time, width=label_width, height=label_height).grid(row=r, column=1)
-#     r += 1
-#
-#     Label(solutions_frame, text= "NEH", width=label_width, height=label_height).grid(row=r, column=0)
-#     nehEnable = "Disable"
-#     if solution.isNehEnabled:
-#         nehEnable = "Enable"
-#     Label(solutions_frame, text=nehEnable, width=label_width, height=label_height).grid(row=r, column=1)
-#
-#     r += 1
-#     Label(solutions_frame, text= "Order", width=label_width, height=label_height).grid(row=r, column=0)
-#     #Label(solutions_frame, text=solution.order, wraplength=label_width*label_width).grid(row=r, column=1)
-#
-#     r += 1
-#
-#
-#     def exit_button():
-#         root.destroy()
-#         pass
-#
-#     def again_button():
-#         root.destroy()
-#         plt.close()
-#         controller.launch_again = True
-#         pass
-#
-#     def back_button():
-#         print("Not implemented...")
-#         pass
-#     def showPlots():
-#         plt.plot(solution.makespanTable)
-#         plt.plot([0, controller.iterations], [controller.upperbound, controller.upperbound], 'r')
-#         plt.plot([0, controller.iterations], [controller.lowerbound, controller.lowerbound], 'g')
-#         plt.show()
-#         #dodac tytul
-#         pass
-#
-#     buttonShowPlots = Button(solutions_frame, text='Show Plots', width=button_width, command=showPlots,
-#                     height=button_height)
-#     buttonShowPlots.grid(row=r, column=0)
-#     buttonShowPlots.config(state = "disable")
-#     againBack = Button(solutions_frame, text='Exit', width=button_width, command=again_button,
-#                 height=button_height).grid(row=r, column=1)
-#     r +=1
-#
-#
-#
-#     solutions_frame.pack(side = LEFT)
-#
+    solutions_frame = Frame(width=200, height= 289)
+
+#print(list_of_solutions[0].launch_again)
+
+    lab_to_refresh = []
+    def make_solutions_visible():
+        r = 0 #row
+
+        lab1 = Label(solutions_frame, text="Solutions:", fg="black", font="Verdana 12 bold")
+        lab1.grid(row=r, column=0)
+        lab_to_refresh.append(lab1)
+
+
+        r += 1
+        l= Label(solutions_frame, text="Parameter", fg="black", font="Verdana 10 bold")
+        l.grid(row=r, column=0)
+        lab_to_refresh.append(l)
+        l = Label(solutions_frame, text="Best result", fg="black", font="Verdana 10 bold")
+        l.grid(row=r, column=1)
+        lab_to_refresh.append(l)
+
+        r+=1
+        l = Label(solutions_frame, text="Makespan ", width=label_width, height=label_height)
+        l.grid(row=r, column=0)
+        lab_to_refresh.append(l)
+        lab1 = Label(solutions_frame, text=solution.minMakespan, width=label_width, height=label_height)
+        lab1.grid(row=r, column=1)
+        lab_to_refresh.append(lab1)
+
+        r += 1
+        l = Label(solutions_frame, text="Iteration", width=label_width, height=label_height)
+        l.grid(row=r, column=0)
+        lab_to_refresh.append(l)
+
+        l= Label(solutions_frame, text=solution.best_iteration, width=label_width, height=label_height)
+        l.grid(row=r, column=1)
+        lab_to_refresh.append(l)
+        r += 1
+
+        time = str(solution.time) + "s"
+        l = Label(solutions_frame, text="Execution time", width=label_width, height=label_height)
+        l.grid(row=r, column=0)
+        lab_to_refresh.append(l)
+        l=Label(solutions_frame, text=time, width=label_width, height=label_height)
+        l.grid(row=r, column=1)
+        lab_to_refresh.append(l)
+        r += 1
+
+        l=Label(solutions_frame, text= "NEH", width=label_width, height=label_height)
+        l.grid(row=r, column=0)
+        lab_to_refresh.append(l)
+        nehEnable = "Disable"
+        if solution.isNehEnabled:
+            nehEnable = "Enable"
+        l=Label(solutions_frame, text=nehEnable, width=label_width, height=label_height)
+        l.grid(row=r, column=1)
+        lab_to_refresh.append(l)
+
+        r += 1
+        l= Label(solutions_frame, text= "Order", width=label_width, height=label_height)
+        l.grid(row=r, column=0)
+        lab_to_refresh.append(l)
+
+        l=Label(solutions_frame, text=solution.order, wraplength=label_width*label_width)
+        l.grid(row=r, column=1)
+        lab_to_refresh.append(l)
+
+        r += 1
+
+        def again_button():
+            root.destroy()
+            plt.close()
+            controller.launch_again = True
+            pass
+
+        def back_button():
+            print("Not implemented...")
+            pass
+        def showPlots():
+            plt.plot(solution.makespanTable)
+            plt.plot([0, controller.iterations], [controller.upperbound, controller.upperbound], 'r')
+            plt.plot([0, controller.iterations], [controller.lowerbound, controller.lowerbound], 'g')
+            plt.show()
+            #dodac tytul
+            pass
+
+        buttonShowPlots = Button(solutions_frame, text='Show Plots', width=button_width, command=showPlots,
+                        height=button_height)
+
+        buttonShowPlots.grid(row=r, column=0)
+        lab_to_refresh.append(buttonShowPlots)
+        r +=1
+
+
+
+    solutions_frame.pack(side = LEFT)
+
 
 ####################################
     #other_frame = Frame(width=200, height=500, background="gray50")
