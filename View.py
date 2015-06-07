@@ -15,6 +15,7 @@ button_height = 2
 
 label_height = 2
 label_width = 23
+inputs22 = []
 
 title = "Cockroach Swarm Optimization in flow-shop job scheduling"
 
@@ -99,8 +100,8 @@ def insertDataManuallyFrame1(controller):
     inputs[0].insert(0, "1000")
     inputs[1].insert(0, "4")
     inputs[2].insert(0, "25")
-    inputs[3].insert(0, "10")
-    inputs[4].insert(0, "8")
+    inputs[3].insert(0, "10") #jobs
+    inputs[4].insert(0, "8") #machines
     inputs[5].insert(0, "10")
 
 
@@ -348,8 +349,53 @@ def allInOneFrame(controller, solution = None):
     input_choose_frame = Frame(width=1200, height=50, background="gray40")
 ####################################
     def readFromFileButton():
-        readFileButton.config(state = "disable")
-        readFromFileFrame(controller)
+        #readFileButton.config(state = "disable")
+        #readFromFileFrame(controller)
+        filename = "none"
+        if (filename == "none"):
+            filename = askopenfilename()
+        file = open(filename, 'r')
+        controller.file = file
+        inputs[3].delete(0, 'end')
+        inputs[4].delete(0, 'end')
+        print("Parsing input data...")
+        pattern = re.compile(r'([0-9]+)')
+        solutionsTable = []
+        str = file.readline()#pierwszza linia do kosza
+        str = file.readline()
+
+        out2 = pattern.findall(str)
+        controller.jobs_num = int(out2[0])
+        print("AAAAAAAAAAAAAAA", controller.jobs_num)
+        controller.machines_num = int(out2[1])
+
+        initialSpeed = int(out2[2])
+        controller.upperbound = int(out2[3])
+        controller.lowerbound = int(out2[4])
+        jobsTab = []
+        for i in range(controller.jobs_num):
+            jobsTab.append([])
+        file.readline() #processing times :
+        for machineN in range(controller.machines_num):
+            str = file.readline()
+            jobsTimesOnMachine = pattern.findall(str)
+            for jobN in range(controller.jobs_num):
+                jobsTab[jobN].append(int(jobsTimesOnMachine[jobN]))
+        controller.jobs = jobsTab
+        print("flowshop startuje z parametrami:")
+        print("iteracje: ", controller.iterations)
+        print("step: ", controller.step_len)
+        print("karaluchy: ", controller.cockroaches_num)
+        ###########r = flowshop.startFromGUI(controller)
+        #robie nowy tylko do podawania ezultatu obliczen
+
+
+        inputs[3].insert(0, "From file: "+`controller.jobs_num`) #jobs
+        inputs[4].insert(0, "From file: "+`controller.machines_num`) #machines
+
+        inputs[3].config(state = "disable")
+        inputs[4].config(state = "disable")
+
         pass
 
     def help_button_function():
@@ -375,22 +421,20 @@ def allInOneFrame(controller, solution = None):
         aboutFrame()
         pass
 
-    readFileButton = Button(input_choose_frame, bg = 'grey70', text='Read from file', width=button_width,
+    readFileButton = Button(input_choose_frame, bg = 'grey70', text='Read from file', width=button_width+25,
                     command=readFromFileButton,
                     height=button_height)
     readFileButton.pack(side = LEFT)
     # insertDataManuallyButton = Button(input_choose_frame, text='Insert data manually', width=button_width,
     #             command=insertDataMAnuallyButton, bg = 'grey70',
     #             height=button_height).pack(side = LEFT)
-    readFileTestButton = Button(input_choose_frame, text='tai50_20short.txt', width=button_width, command=readTest,
-                height=button_height, bg = 'grey70')
-    readFileTestButton.pack(side = LEFT)
 
-    helpButton = Button(input_choose_frame, text='Help', width=button_width, command=help_button_function,
+
+    helpButton = Button(input_choose_frame, text='Help', width=button_width+25, command=help_button_function,
                 height=button_height, bg = 'grey70').pack(side = LEFT)
-    aboutButton = Button(input_choose_frame, bg = 'grey70', text='About', width=button_width, command=about,
+    aboutButton = Button(input_choose_frame, bg = 'grey70', text='About', width=button_width+25, command=about,
                 height=button_height).pack(side = LEFT)
-    exitButton = Button(input_choose_frame, bg = 'grey70', text='Exit', width=button_width, command=exit_program,
+    exitButton = Button(input_choose_frame, bg = 'grey70', text='Exit', width=button_width+25, command=exit_program,
                 height=button_height).pack(side = LEFT)
     input_choose_frame.pack(side = TOP, fill = X)
 
@@ -407,6 +451,10 @@ def allInOneFrame(controller, solution = None):
 
 
     r = 0
+    lab1 = Label(parameters_frame, text="Parameters:", fg="black", font="Verdana 12 bold")
+    lab1.grid(row=r, column=0)
+    lab_to_refresh.append(lab1)
+    r+=1
     nehCheckboxInt = IntVar()
     graphCheckboxInt = IntVar()
     Label(parameters_frame, text="Run NEH before start", width=label_width, height=label_height).grid(row=r, column=0)
@@ -430,7 +478,6 @@ def allInOneFrame(controller, solution = None):
 
 
 
-    inputs22 = []
     labelsToHide = []
     buttonsToForget = []
 
@@ -438,8 +485,10 @@ def allInOneFrame(controller, solution = None):
        # buttonApply.config(state = "disable")
 
         for a in inputs22:
-            for  b in a:
+            for b in a:
                 b.grid_forget()
+        global  inputs22
+        inputs22 = []
         for a in labelsToHide:
             a.grid_forget()
         for a in buttonsToForget:
@@ -460,17 +509,43 @@ def allInOneFrame(controller, solution = None):
 
         try:
             controller.iterations = int(inputs[0].get())
+        except ValueError:
+            pass
             controller.step_len = int(inputs[1].get())
             controller.cockroaches_num = int(inputs[2].get())
-            controller.jobs_num = int(inputs[3].get())
-            controller.machines_num = int(inputs[4].get())
-            controller.visual= int(inputs[5].get())
+        try:
+            if controller.file is None:
+                controller.jobs_num = int(inputs[3].get())
+        except ValueError:
+            pass
+        try:
+            if controller.file is None:
+                controller.machines_num = int(inputs[4].get())
+        except ValueError:
+            pass
+        try:
+            controller.visual = int(inputs[5].get())
         except ValueError:
             pass
         #root.destroy()
         #insertDataManuallyFrame2(controller)
         if controller.file is not None:
-            make_go_button_visible()
+            print("z pliku")
+            r = flowshop.startFromGUI(controller)
+            controller.makespanTable = r[0][2]
+            controller.time = r[1]
+            controller.order = r[0][1]
+
+            controller.minMakespan = r[0][0]
+            controller.makespanTable = r[0][2]
+            controller.best_iteration = \
+                controller.makespanTable.index(controller.minMakespan)
+
+            solutionsTable = []
+            solutionsTable.append(controller)
+            for i in xrange(len(solutionsTable)):
+                print("Zrobilo sie\n")
+                make_solutions_visible()
         else:
             make_input_frame_visible()
 
@@ -517,6 +592,7 @@ def allInOneFrame(controller, solution = None):
             r = r + 1
 
         def go_button():
+            print(controller.machines_num , "ssssssssssss", controller.jobs_num)
             try:
                 for i in range(0, controller.jobs_num):
                     inputsStr = []
@@ -529,7 +605,6 @@ def allInOneFrame(controller, solution = None):
                     controller.jobs += [inputsInt]
             except ValueError:
                 print("VALUE ERROR",controller.jobs)
-
             print("flowshop startuje z parametrami:")
             print("iteracje: ", controller.iterations)
             print("step: ", controller.step_len)
