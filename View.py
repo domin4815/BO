@@ -367,7 +367,6 @@ def allInOneFrame(controller, solution = None):
 
         out2 = pattern.findall(str)
         controller.jobs_num = int(out2[0])
-        print("AAAAAAAAAAAAAAA", controller.jobs_num)
         controller.machines_num = int(out2[1])
 
         initialSpeed = int(out2[2])
@@ -383,10 +382,7 @@ def allInOneFrame(controller, solution = None):
             for jobN in range(controller.jobs_num):
                 jobsTab[jobN].append(int(jobsTimesOnMachine[jobN]))
         controller.jobs = jobsTab
-        print("flowshop startuje z parametrami:")
-        print("iteracje: ", controller.iterations)
-        print("step: ", controller.step_len)
-        print("karaluchy: ", controller.cockroaches_num)
+
         ###########r = flowshop.startFromGUI(controller)
         #robie nowy tylko do podawania ezultatu obliczen
 
@@ -515,8 +511,14 @@ def allInOneFrame(controller, solution = None):
             controller.iterations = int(inputs[0].get())
         except ValueError:
             pass
+        try:
             controller.step_len = int(inputs[1].get())
+        except ValueError:
+            pass
+        try:
             controller.cockroaches_num = int(inputs[2].get())
+        except ValueError:
+            pass
         try:
             if controller.file is None:
                 controller.jobs_num = int(inputs[3].get())
@@ -535,6 +537,10 @@ def allInOneFrame(controller, solution = None):
         #insertDataManuallyFrame2(controller)
         if controller.file is not None:
             print("z pliku")
+            print("flowshop startuje z parametrami:")
+            print("iteracje: ", controller.iterations)
+            print("step: ", controller.step_len)
+            print("karaluchy: ", controller.cockroaches_num)
             tkMessageBox.showinfo("", "Click OK to start algorithm")
             r = flowshop.startFromGUI(controller)
             controller.makespanTable = r[0][2]
@@ -610,12 +616,13 @@ def allInOneFrame(controller, solution = None):
                     controller.jobs += [inputsInt]
             except ValueError:
                 print("VALUE ERROR",controller.jobs)
+
+            tkMessageBox.showinfo("", "Click OK to start algorithm")
+
             print("flowshop startuje z parametrami:")
             print("iteracje: ", controller.iterations)
             print("step: ", controller.step_len)
             print("karaluchy: ", controller.cockroaches_num)
-            tkMessageBox.showinfo("", "Click OK to start algorithm")
-
             r = flowshop.startFromGUI(controller)
             controller.makespanTable = r[0][2]
             controller.time = r[1]
