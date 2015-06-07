@@ -4,6 +4,7 @@ from random import shuffle, randint, uniform
 from Tkinter import *
 import flowshop
 from Controller import *
+import tkMessageBox
 
 from tkFileDialog import askopenfilename
 # CONFIG
@@ -407,7 +408,6 @@ def allInOneFrame(controller, solution = None):
         pass
 
     def readTest():
-        readFileTestButton.config(state = "disable")
 
         root.destroy()
         readFromFileFrame(controller, filename="tai50_20short.txt")
@@ -455,6 +455,9 @@ def allInOneFrame(controller, solution = None):
     lab1.grid(row=r, column=0)
     lab_to_refresh.append(lab1)
     r+=1
+
+
+
     nehCheckboxInt = IntVar()
     graphCheckboxInt = IntVar()
     Label(parameters_frame, text="Run NEH before start", width=label_width, height=label_height).grid(row=r, column=0)
@@ -462,6 +465,7 @@ def allInOneFrame(controller, solution = None):
     r+=1
     Label(parameters_frame, text="Show graph dynamically  ", width=label_width, height=label_height).grid(row=r, column=0)
     Checkbutton(parameters_frame, text="Graph", variable=graphCheckboxInt).grid(row=r, column=1)
+    controller.file = None
     r +=1
     for c in strings:
         Label(parameters_frame, text=c, width=label_width, height=label_height).grid(row=r, column=0)
@@ -531,6 +535,7 @@ def allInOneFrame(controller, solution = None):
         #insertDataManuallyFrame2(controller)
         if controller.file is not None:
             print("z pliku")
+            tkMessageBox.showinfo("", "Click OK to start algorithm")
             r = flowshop.startFromGUI(controller)
             controller.makespanTable = r[0][2]
             controller.time = r[1]
@@ -609,6 +614,8 @@ def allInOneFrame(controller, solution = None):
             print("iteracje: ", controller.iterations)
             print("step: ", controller.step_len)
             print("karaluchy: ", controller.cockroaches_num)
+            tkMessageBox.showinfo("", "Click OK to start algorithm")
+
             r = flowshop.startFromGUI(controller)
             controller.makespanTable = r[0][2]
             controller.time = r[1]
@@ -656,6 +663,18 @@ def allInOneFrame(controller, solution = None):
         lab1 = Label(solutions_frame, text="Solutions:", fg="black", font="Verdana 12 bold")
         lab1.grid(row=r, column=0)
         lab_to_refresh.append(lab1)
+        controller.file = None
+
+        inputs[3].config(state = "normal")
+        inputs[4].config(state = "normal")
+        inputs[3].delete(0, END)
+        inputs[4].delete(0, END)
+
+        inputs[3].insert(0, controller.jobs_num)
+        inputs[4].insert(0, controller.machines_num)
+
+
+
 
 
         r += 1
