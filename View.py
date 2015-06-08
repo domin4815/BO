@@ -344,8 +344,8 @@ def presentSolutionsFrame(solution, controller):
 def allInOneFrame(controller, solution = None):
     root = Tk()
     root.title(title)
-    img = PhotoImage(file='a.gif')
-    root.tk.call('wm', 'iconphoto', root._w, img)
+    # img = PhotoImage(file='a.gif')
+    # root.tk.call('wm', 'iconphoto', root._w, img=None)
 
     input_choose_frame = Frame(width=1200, height=50, background="gray40")
 ####################################
@@ -555,7 +555,6 @@ def allInOneFrame(controller, solution = None):
             solutionsTable = []
             solutionsTable.append(controller)
             for i in xrange(len(solutionsTable)):
-                print("Zrobilo sie\n")
                 make_solutions_visible()
         else:
             make_input_frame_visible()
@@ -636,7 +635,6 @@ def allInOneFrame(controller, solution = None):
             solutionsTable = []
             solutionsTable.append(controller)
             for i in xrange(len(solutionsTable)):
-                print("Zrobilo sie\n")
                 make_solutions_visible()
 
 
